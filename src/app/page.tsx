@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { CHAPTERS, Chapter, Lesson } from '@/lib/courseData';
 import {
   Play, CheckCircle2, Circle, FileText, Download, Save, Sparkles,
-  LogOut, ChevronRight, ChevronDown, BookOpen, Layers, Zap, X, ShieldAlert, ExternalLink
+  LogOut, ChevronRight, ChevronDown, BookOpen, Layers, Zap, X, ShieldAlert, ExternalLink,
+  Trophy
 } from 'lucide-react';
+import { LogEarningsModal } from '@/components/LogEarningsModal';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -21,6 +23,8 @@ export default function DashboardPage() {
 
   const [activeTab, setActiveTab] = useState<'notes' | 'resources' | 'overview'>('overview');
   const [showUpsellModal, setShowUpsellModal] = useState(false);
+  const [showEarningsModal, setShowEarningsModal] = useState(false);
+  const [userTotalEarnings, setUserTotalEarnings] = useState<number>(0);
 
   // Auth & Progress Initialization
   useEffect(() => {
@@ -33,6 +37,7 @@ export default function DashboardPage() {
       const u = JSON.parse(stored);
       setUser(u);
       fetchUserProgress(u.id);
+      fetchUserEarnings(u.id);
     } catch {
       router.push('/login');
     }
@@ -44,6 +49,18 @@ export default function DashboardPage() {
       fetchLessonNote(user.id, activeLesson.id);
     }
   }, [user, activeLesson]);
+
+  const fetchUserEarnings = async (userId: string) => {
+    try {
+      const res = await fetch(`/api/earnings?userId=${userId}`);
+      const data = await res.json();
+      if (data.status === 'success') {
+        setUserTotalEarnings(data.totalZar || 0);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const fetchUserProgress = async (userId: string) => {
     try {
@@ -167,6 +184,20 @@ export default function DashboardPage() {
 
         {/* Header Right Actions */}
         <div className="flex items-center gap-2 md:gap-3">
+          <button
+            onClick={() => setShowEarningsModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#00ff66]/15 hover:bg-[#00ff66]/25 border border-[#00ff66]/40 text-[#00ff66] font-bold text-xs transition cursor-pointer"
+            title="Log your client deals & earnings"
+          >
+            <Trophy className="w-3.5 h-3.5 text-[#00ff66]" />
+            <span>Log Earnings</span>
+            {userTotalEarnings > 0 && (
+              <span className="bg-[#00ff66] text-black font-black text-[10px] px-1.5 py-0.5 rounded-md font-mono">
+                R{userTotalEarnings >= 1000 ? `${Math.round(userTotalEarnings / 1000)}k` : userTotalEarnings}
+              </span>
+            )}
+          </button>
+
           <a
             href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
             target="_blank"
@@ -309,7 +340,28 @@ export default function DashboardPage() {
           </div>
 
           {/* SIDEBAR ADD-ONS & UPGRADE PROMPTS */}
-          <div className="p-3 border-t border-white/10 bg-black/60 space-y-2">
+          <div className="p-3 border-t border-white/10 bg-black/60 space-y-2.5">
+            {/* Student Earnings Tracker widget */}
+            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="p-1.5 rounded-lg bg-[#00ff66]/10 text-[#00ff66] shrink-0">
+                  <Trophy className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[10px] font-mono uppercase text-white/50 block truncate">My Earnings</span>
+                  <span className="text-sm font-black font-mono text-[#00ff66] truncate block">
+                    R{userTotalEarnings.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowEarningsModal(true)}
+                className="px-2.5 py-1.5 rounded-lg bg-[#00ff66] text-black font-extrabold text-[11px] hover:bg-[#00ff66]/90 transition cursor-pointer shrink-0"
+              >
+                + Log Deal
+              </button>
+            </div>
+
             <a
               href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
               target="_blank"
@@ -573,6 +625,13 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+      {/* 5. LOG EARNINGS MODAL DIALOG */}
+      <LogEarningsModal
+        isOpen={showEarningsModal}
+        onClose={() => setShowEarningsModal(false)}
+        userId={user.id}
+        onEarningsUpdated={(total) => setUserTotalEarnings(total)}
+      />
     </div>
   );
 }
