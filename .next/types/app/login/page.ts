@@ -1,4 +1,4 @@
-// File: D:\bpoaccelerator\blueprint\src\app\login\page.tsx
+// File: D:\bpoaccelerator\blueprint-app\src\app\login\page.tsx
 import * as entry from '../../../../src/app/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

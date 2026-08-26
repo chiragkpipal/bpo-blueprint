@@ -36,6 +36,13 @@ export async function POST(request: Request) {
         return NextResponse.json({ status: 'error', message: 'Incorrect password.' }, { status: 401 });
       }
 
+      if (user.status !== 'active') {
+        return NextResponse.json({
+          status: 'error',
+          message: 'Your payment is still pending confirmation or access has not been activated yet.'
+        }, { status: 403 });
+      }
+
       return NextResponse.json({
         status: 'success',
         user: {
