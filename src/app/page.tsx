@@ -166,7 +166,18 @@ export default function DashboardPage() {
         </div>
 
         {/* Header Right Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
+          <a
+            href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs transition cursor-pointer"
+            title="50+ Real Client Websites, Apps, Games & Logos"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-[#00ff66]" />
+            <span>50+ Work Examples</span>
+          </a>
+
           <button
             onClick={() => setShowUpsellModal(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#d4af37] to-amber-500 text-black font-extrabold text-xs shadow-lg hover:brightness-110 transition cursor-pointer"
@@ -191,17 +202,30 @@ export default function DashboardPage() {
       </header>
 
       {/* 2. UPSELL PROMO BANNER */}
-      <div className="bg-gradient-to-r from-[#d4af37]/20 via-[#00ff66]/10 to-[#d4af37]/20 border-b border-[#d4af37]/30 px-4 py-2.5 text-center flex items-center justify-center gap-3">
-        <Sparkles className="w-4 h-4 text-[#d4af37] shrink-0" />
-        <p className="text-xs text-white font-medium">
-          <strong className="text-[#d4af37] uppercase font-bold">Blueprint Member Offer:</strong> Upgrade to the complete BPOAccelerator Software Suite & Private Community for <span className="text-[#00ff66] font-bold underline">50% OFF</span>!
-        </p>
-        <button
-          onClick={() => setShowUpsellModal(true)}
-          className="ml-2 underline text-xs text-[#d4af37] font-bold hover:text-white transition cursor-pointer"
-        >
-          Claim Offer →
-        </button>
+      <div className="bg-gradient-to-r from-[#d4af37]/20 via-[#00ff66]/10 to-[#d4af37]/20 border-b border-[#d4af37]/30 px-4 py-2.5 text-center flex flex-wrap items-center justify-center gap-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-[#d4af37] shrink-0" />
+          <p className="text-xs text-white font-medium">
+            <strong className="text-[#d4af37] uppercase font-bold">Blueprint Member Offer:</strong> Upgrade to the BPOAccelerator Software Suite & Live Coaching for <span className="text-[#00ff66] font-bold underline">50% OFF your first month</span>!
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowUpsellModal(true)}
+            className="underline text-xs text-[#d4af37] font-bold hover:text-white transition cursor-pointer"
+          >
+            Claim 50% OFF Software →
+          </button>
+          <span className="text-white/20">|</span>
+          <a
+            href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[#00ff66] font-bold hover:underline transition"
+          >
+            Get 50+ Work Examples (Websites, Apps, Games) →
+          </a>
+        </div>
       </div>
 
       {/* 3. MAIN DASHBOARD CONTENT */}
@@ -282,6 +306,45 @@ export default function DashboardPage() {
                 </div>
               );
             })}
+          </div>
+
+          {/* SIDEBAR ADD-ONS & UPGRADE PROMPTS */}
+          <div className="p-3 border-t border-white/10 bg-black/60 space-y-2">
+            <a
+              href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-2.5 rounded-xl bg-white/[0.03] hover:bg-[#00ff66]/10 border border-white/10 hover:border-[#00ff66]/40 transition group cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-white group-hover:text-[#00ff66] flex items-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-[#00ff66]" /> 50+ Work Examples
+                </span>
+                <span className="text-[9px] font-mono font-bold text-[#d4af37] bg-[#d4af37]/10 px-1.5 py-0.5 rounded border border-[#d4af37]/20">
+                  R2,000
+                </span>
+              </div>
+              <p className="text-[10px] text-white/40 mt-1 leading-tight">
+                50+ real client websites, apps, games & logos to win deals.
+              </p>
+            </a>
+
+            <button
+              onClick={() => setShowUpsellModal(true)}
+              className="w-full text-left p-2.5 rounded-xl bg-[#d4af37]/10 hover:bg-[#d4af37]/20 border border-[#d4af37]/30 transition group cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#d4af37] flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 fill-[#d4af37]" /> Full BPO Suite
+                </span>
+                <span className="text-[9px] font-mono font-bold text-[#00ff66] bg-[#00ff66]/10 px-1.5 py-0.5 rounded border border-[#00ff66]/20">
+                  50% OFF
+                </span>
+              </div>
+              <p className="text-[10px] text-white/50 mt-1 leading-tight">
+                Automated lead bots, scripts, live calls & Discord.
+              </p>
+            </button>
           </div>
         </aside>
 
@@ -459,17 +522,17 @@ export default function DashboardPage() {
                 <Sparkles className="w-3 h-3" /> Exclusive Blueprint Member Perk
               </div>
               <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight">
-                GET ACCESS TO BPOACCELERATOR FOR <span className="text-[#00ff66]">50% OFF</span>
+                GET THE SOFTWARE FOR <span className="text-[#00ff66]">50% OFF</span>
               </h3>
               <p className="text-xs text-white/70 leading-relaxed font-mono">
-                Take your BPO business to full automation with our main software suite, lead databases, weekly live coaching calls & private VIP community.
+                Get 50% OFF your first month of the complete BPOAccelerator Software Suite, automated lead bidding tools, weekly live coaching calls & private VIP community.
               </p>
             </div>
 
             <div className="space-y-3 bg-white/[0.02] border border-white/10 p-4 rounded-2xl text-xs space-y-2 font-mono">
               <div className="flex items-center gap-2 text-[#00ff66]">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>Full AI BPO Lead Scraper & CRM Suite</span>
+                <span>Full AI Upwork & Freelancer Bidding Suite</span>
               </div>
               <div className="flex items-center gap-2 text-[#00ff66]">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
@@ -483,16 +546,26 @@ export default function DashboardPage() {
 
             <div className="space-y-3">
               <a
-                href="https://bpoaccelerator.ai?discount=50OFF"
+                href="https://bpoaccelerator.ai?signup=true&coupon=50OFF"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#d4af37] to-amber-500 text-black font-black py-4 rounded-xl hover:brightness-110 transition text-sm shadow-xl cursor-pointer"
               >
-                Claim 50% OFF Upgrade Now <ExternalLink className="w-4 h-4" />
+                Claim 50% OFF First Month <ExternalLink className="w-4 h-4" />
               </a>
+
+              <a
+                href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-[#00ff66] hover:text-black text-white font-bold py-3.5 rounded-xl border border-white/15 transition text-xs cursor-pointer"
+              >
+                <BookOpen className="w-4 h-4" /> Get 50+ Work Examples (Websites, Apps, Games, Logos)
+              </a>
+
               <button
                 onClick={() => setShowUpsellModal(false)}
-                className="w-full text-center text-xs text-white/40 hover:text-white transition"
+                className="w-full text-center text-xs text-white/40 hover:text-white transition pt-1 cursor-pointer"
               >
                 No thanks, continue with Blueprint course only
               </button>
