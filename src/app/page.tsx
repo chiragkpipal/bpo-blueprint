@@ -2,20 +2,42 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { CHAPTERS, Chapter, Lesson } from '@/lib/courseData';
 import {
   Play, CheckCircle2, Circle, FileText, Download, Save, Sparkles,
   LogOut, ChevronRight, ChevronDown, BookOpen, Layers, Zap, X,
   Trophy, ArrowRight, ArrowLeft, Clock, CheckSquare, Square,
-  Check, Terminal
+  Check, Terminal, Loader2
 } from 'lucide-react';
 import { LogEarningsModal } from '@/components/LogEarningsModal';
+import VidalyticsPlayer from '@/components/VidalyticsPlayer';
+
+interface Lesson {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string;
+  duration: string;
+  orderIndex: number;
+  attachments?: any[];
+}
+
+interface Chapter {
+  id: string;
+  title: string;
+  description: string;
+  orderIndex: number;
+  lessons: Lesson[];
+}
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  const [activeChapter, setActiveChapter] = useState<Chapter>(CHAPTERS[0]);
-  const [activeLesson, setActiveLesson] = useState<Lesson>(CHAPTERS[0].lessons[0]);
+  
+  // Dynamic Course State from Database
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [loadingCourse, setLoadingCourse] = useState(true);
+  const [activeChapter, setActiveChapter] = useState<Chapter | null>(null);
+  const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
 
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [noteContent, setNoteContent] = useState<string>('');
@@ -31,7 +53,7 @@ export default function DashboardPage() {
   // Local Action checklist state
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
 
-  // Auth & Progress Initialization
+  // 1. Auth & Progress Initialization
   useEffect(() => {
     const stored = localStorage.getItem('lms_user');
     if (!stored) {
@@ -48,7 +70,32 @@ export default function DashboardPage() {
     }
   }, [router]);
 
-  // Load notes whenever active lesson changes
+  // 2. Fetch Dynamic Course Data from Database
+  useEffect(() => {
+    async function fetchCourseData() {
+      try {
+        setLoadingCourse(true);
+        const res = await fetch('/api/course');
+        const json = await res.json();
+        if (json.status === 'success' && json.data && json.data.length > 0) {
+          setChapters(json.data);
+          const firstChapter = json.data[0];
+          setActiveChapter(firstChapter);
+          if (firstChapter.lessons && firstChapter.lessons.length > 0) {
+            setActiveLesson(firstChapter.lessons[0]);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load course from database:', err);
+      } finally {
+        setLoadingCourse(false);
+      }
+    }
+
+    fetchCourseData();
+  }, []);
+
+  // 3. Load notes & checklist whenever active lesson changes
   useEffect(() => {
     if (user && activeLesson) {
       fetchLessonNote(user.id, activeLesson.id);
@@ -129,7 +176,7 @@ export default function DashboardPage() {
     if (!user || !activeLesson) return;
     setSavingNote(true);
     try {
-      await fetch('/api/notes', {
+      const res = await fetch('/api/notes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -138,8 +185,10 @@ export default function DashboardPage() {
           content: noteContent
         })
       });
-      setNoteSavedNotice(true);
-      setTimeout(() => setNoteSavedNotice(false), 2500);
+      if (res.ok) {
+        setNoteSavedNotice(true);
+        setTimeout(() => setNoteSavedNotice(false), 3000);
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -147,50 +196,16 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDownloadNotes = () => {
-    if (!noteContent) return;
-    const element = document.createElement("a");
-    const file = new Blob([`BPO BLUEPRINT NOTES — ${activeLesson.title}\n\n${noteContent}`], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = `${activeLesson.title.toLowerCase().replace(/[^a-z0-9]/g, '_')}_notes.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  };
-
-  const toggleChecklistItem = (itemIndex: number) => {
-    const newChecklist = {
-      ...checklist,
-      [itemIndex]: !checklist[itemIndex]
-    };
-    setChecklist(newChecklist);
-    if (activeLesson) {
-      localStorage.setItem(`checklist_${activeLesson.id}`, JSON.stringify(newChecklist));
-    }
-  };
-
-  // Flattened lessons for navigation
-  const allLessons = useMemo(() => {
-    return CHAPTERS.flatMap(ch => ch.lessons.map(les => ({ ...les, chapter: ch })));
-  }, []);
-
-  const currentLessonIndex = allLessons.findIndex(l => l.id === activeLesson.id);
-  const prevLesson = currentLessonIndex > 0 ? allLessons[currentLessonIndex - 1] : null;
-  const nextLesson = currentLessonIndex < allLessons.length - 1 ? allLessons[currentLessonIndex + 1] : null;
-
-  const navigateToLesson = (lessonItem: typeof allLessons[0]) => {
-    setActiveChapter(lessonItem.chapter);
-    setActiveLesson(lessonItem);
-    setSidebarOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleCompleteAndNext = async () => {
-    if (!completedLessons.includes(activeLesson.id)) {
-      await handleToggleCompleted();
-    }
-    if (nextLesson) {
-      navigateToLesson(nextLesson);
+  const handleToggleChecklistItem = (itemIndex: number) => {
+    if (!activeLesson) return;
+    const key = `${activeLesson.id}_${itemIndex}`;
+    const nextState = !checklist[key];
+    const updated = { ...checklist, [key]: nextState };
+    setChecklist(updated);
+    try {
+      localStorage.setItem(`checklist_${activeLesson.id}`, JSON.stringify(updated));
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -199,103 +214,114 @@ export default function DashboardPage() {
     router.push('/login');
   };
 
-  const totalLessonsCount = allLessons.length;
-  const completionPercentage = Math.round((completedLessons.length / (totalLessonsCount || 1)) * 100);
+  // Calculations for progress bar
+  const totalLessonsCount = useMemo(() => {
+    return chapters.reduce((acc, ch) => acc + (ch.lessons?.length || 0), 0);
+  }, [chapters]);
 
-  const actionItems = useMemo(() => {
-    switch (activeChapter.id) {
-      case 'ch-01':
-        return [
-          "Understand the core profit dynamics of the BPO middleman business model.",
-          "Identify 3 primary international target markets (US, UK, Australia).",
-          "Select 2 high-margin niches where remote talent delivers massive ROI."
-        ];
-      case 'ch-02':
-        return [
-          "Choose your core service offering (Appointment Setting, Lead Gen, or Web Dev).",
-          "Calculate your cost-plus markup to ensure 60%+ net profit margin.",
-          "Finalize your monthly retainer pricing structure."
-        ];
-      case 'ch-03':
-        return [
-          "Set up secondary domain infrastructure & DNS records (SPF, DKIM, DMARC).",
-          "Build a targeted lead list of 250+ decision-makers in your chosen niche.",
-          "Deploy cold email & LinkedIn outreach sequences."
-        ];
-      case 'ch-04':
-        return [
-          "Prepare discovery call framework and objection-handling scripts.",
-          "Conduct discovery call focusing on client pain points and operational bottlenecks.",
-          "Send service agreement and secure upfront payment / retainer."
-        ];
-      case 'ch-05':
-        return [
-          "Vet and hire skilled delivery specialists via Upwork / Freelancer.",
-          "Set up client communication Slack / Discord workspace.",
-          "Deliver quality work while managing the team and protecting your margin."
-        ];
-      case 'ch-06':
-        return [
-          "Standardize operational SOPs so team runs autonomously.",
-          "Reinvest profits into multi-inbox cold email automation.",
-          "Scale retainers to R100,000+ / $5,000+ monthly recurring revenue."
-        ];
-      default:
-        return [
-          "Watch the full module video without skipping.",
-          "Take notes on key frameworks and methodologies.",
-          "Implement the action steps before moving to the next chapter."
-        ];
+  const completionPercentage = useMemo(() => {
+    if (totalLessonsCount === 0) return 0;
+    return Math.min(100, Math.round((completedLessons.length / totalLessonsCount) * 100));
+  }, [completedLessons, totalLessonsCount]);
+
+  // Lesson navigation
+  const allLessonsFlat = useMemo(() => {
+    const list: { chapter: Chapter; lesson: Lesson }[] = [];
+    chapters.forEach(ch => {
+      (ch.lessons || []).forEach(les => {
+        list.push({ chapter: ch, lesson: les });
+      });
+    });
+    return list;
+  }, [chapters]);
+
+  const currentLessonIndex = useMemo(() => {
+    if (!activeLesson) return 0;
+    return allLessonsFlat.findIndex(item => item.lesson.id === activeLesson.id);
+  }, [allLessonsFlat, activeLesson]);
+
+  const prevLesson = currentLessonIndex > 0 ? allLessonsFlat[currentLessonIndex - 1] : null;
+  const nextLesson = currentLessonIndex < allLessonsFlat.length - 1 ? allLessonsFlat[currentLessonIndex + 1] : null;
+
+  const navigateToLesson = (item: { chapter: Chapter; lesson: Lesson }) => {
+    setActiveChapter(item.chapter);
+    setActiveLesson(item.lesson);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCompleteAndNext = async () => {
+    if (!activeLesson) return;
+    if (!completedLessons.includes(activeLesson.id)) {
+      await handleToggleCompleted();
     }
-  }, [activeChapter.id]);
+    if (nextLesson) {
+      navigateToLesson(nextLesson);
+    }
+  };
 
-  if (!user) return null;
+  if (loadingCourse) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center font-mono space-y-4">
+        <Loader2 className="w-8 h-8 text-matrix animate-spin" />
+        <span className="text-xs uppercase tracking-widest text-matrix">Loading The BPO Blueprint...</span>
+      </div>
+    );
+  }
+
+  if (!activeChapter || !activeLesson) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center font-mono space-y-4">
+        <span className="text-xs uppercase tracking-widest text-white/50">No course material found in database.</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="theme-blueprint min-h-screen bg-black text-white flex flex-col font-sans selection:bg-matrix selection:text-black">
-      {/* 1. TOP NAVIGATION HEADER (Matching blueprint-landing) */}
-      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-matrix/40 px-5 py-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+    <div className="min-h-screen bg-black text-white flex flex-col theme-blueprint selection:bg-matrix selection:text-black">
+      {/* 1. TOP MATRIX NAVBAR */}
+      <header className="h-16 border-b border-matrix/30 bg-black/90 backdrop-blur-md px-4 md:px-6 flex items-center justify-between sticky top-0 z-50">
+        {/* Brand & Chapter Toggle */}
+        <div className="flex items-center gap-4">
           <button
-            onClick={() => setSidebarOpen(v => !v)}
-            className="lg:hidden text-matrix cursor-pointer p-1"
-            aria-label="Toggle Curriculum"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10 text-white/80 hover:text-matrix transition"
+            aria-label="Toggle Menu"
           >
-            <Terminal className="h-6 w-6" />
+            <Layers className="w-5 h-5" />
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="text-matrix font-mono text-xs tracking-widest">[◉]</span>
-            <span className="font-display text-sm md:text-base font-black tracking-[0.18em] text-white">
-              BPO<span className="text-gold">.</span>BLUEPRINT
+            <span className="text-matrix font-mono font-bold tracking-wider">[◉]</span>
+            <span className="font-display font-black tracking-tight text-white text-base md:text-lg">
+              BPO<span className="text-gold">.BLUEPRINT</span>
             </span>
           </div>
 
-          <span className="hidden sm:inline-block px-2 py-0.5 rounded border border-matrix/40 font-mono text-[10px] font-bold text-matrix uppercase tracking-widest ml-2">
-            STUDENT PORTAL
-          </span>
-        </div>
-
-        {/* Global Progress Bar */}
-        <div className="hidden md:flex items-center gap-3 bg-white/[0.02] border border-matrix/30 px-4 py-1.5 rounded-full">
-          <span className="font-mono text-[11px] uppercase tracking-widest text-white/50">Progress:</span>
-          <div className="w-28 lg:w-36 bg-white/10 h-1.5 rounded-full overflow-hidden">
-            <div
-              className="bg-matrix h-full transition-all duration-500 rounded-full"
-              style={{ width: `${completionPercentage}%` }}
-            />
+          <div className="hidden md:flex items-center gap-2 pl-4 border-l border-white/10 font-mono text-xs text-white/50">
+            <span className="w-2 h-2 rounded-full bg-matrix animate-pulse"></span>
+            <span>STUDENT PORTAL</span>
           </div>
-          <span className="text-xs font-mono font-bold text-matrix">{completionPercentage}%</span>
-          <span className="font-mono text-[10px] text-white/40">({completedLessons.length}/{totalLessonsCount})</span>
         </div>
 
-        {/* Header Right Actions */}
-        <div className="flex items-center gap-2.5">
-          {/* Earnings Deal Tracker Button */}
+        {/* Global Progress & Quick Stats */}
+        <div className="flex items-center gap-3 sm:gap-6">
+          {/* Progress Pill */}
+          <div className="hidden sm:flex items-center gap-3 bg-white/[0.02] border border-matrix/30 rounded-full px-4 py-1.5 font-mono text-xs">
+            <span className="text-matrix font-bold">{completionPercentage}%</span>
+            <div className="w-20 md:w-28 h-2 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-matrix to-gold transition-all duration-500 shadow-[0_0_10px_rgba(0,230,90,0.5)]"
+                style={{ width: `${completionPercentage}%` }}
+              />
+            </div>
+            <span className="text-white/40 hidden md:inline">COMPLETE</span>
+          </div>
+
+          {/* Student Earnings Badge */}
           <button
             onClick={() => setShowEarningsModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-matrix/10 border border-matrix/40 text-matrix font-mono text-xs font-bold transition cursor-pointer"
-            title="Log verified client deals & track earnings"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-matrix/10 hover:bg-matrix/20 border border-matrix/40 text-matrix font-mono text-xs transition cursor-pointer"
+            title="Log Your Client Revenue"
           >
             <Trophy className="w-3.5 h-3.5 text-matrix" />
             <span className="hidden sm:inline">EARNINGS:</span>
@@ -380,7 +406,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <span className="text-matrix font-mono text-xs">[◉]</span>
               <span className="font-mono text-xs font-bold uppercase tracking-widest text-white">
-                Course Chapters
+                Course Modules
               </span>
             </div>
             <span className="font-mono text-[11px] text-matrix">
@@ -389,10 +415,10 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto divide-y divide-white/5 custom-scrollbar bg-black">
-            {CHAPTERS.map((ch) => {
-              const isActiveChapter = activeChapter.id === ch.id;
-              const chapterCompletedCount = ch.lessons.filter(l => completedLessons.includes(l.id)).length;
-              const isChapterDone = chapterCompletedCount === ch.lessons.length && ch.lessons.length > 0;
+            {chapters.map((ch, idx) => {
+              const isActiveChapter = activeChapter?.id === ch.id;
+              const chapterCompletedCount = (ch.lessons || []).filter(l => completedLessons.includes(l.id)).length;
+              const isChapterDone = chapterCompletedCount === (ch.lessons?.length || 0) && (ch.lessons?.length || 0) > 0;
 
               return (
                 <div key={ch.id} className="bg-transparent">
@@ -406,7 +432,7 @@ export default function DashboardPage() {
                     <span className={`font-mono text-xs font-bold shrink-0 mt-0.5 ${
                       isChapterDone ? 'text-matrix' : isActiveChapter ? 'text-matrix' : 'text-gold'
                     }`}>
-                      {ch.number}
+                      {(idx + 1).toString().padStart(2, '0')}
                     </span>
 
                     <div className="flex-1 min-w-0">
@@ -420,21 +446,23 @@ export default function DashboardPage() {
                           </span>
                         ) : (
                           <span className="font-mono text-[10px] text-white/40 shrink-0">
-                            {chapterCompletedCount}/{ch.lessons.length}
+                            {chapterCompletedCount}/{ch.lessons?.length || 0}
                           </span>
                         )}
                       </div>
-                      <p className="font-mono text-[11px] text-white/40 truncate mt-0.5">
-                        {ch.description}
-                      </p>
+                      {ch.description && (
+                        <p className="font-mono text-[11px] text-white/40 truncate mt-0.5">
+                          {ch.description}
+                        </p>
+                      )}
                     </div>
                   </button>
 
                   {/* Lessons */}
                   {isActiveChapter && (
                     <div className="bg-black/80 py-1.5 px-3 space-y-1 border-t border-b border-white/5">
-                      {ch.lessons.map((les) => {
-                        const isSelectedLesson = activeLesson.id === les.id;
+                      {(ch.lessons || []).map((les) => {
+                        const isSelectedLesson = activeLesson?.id === les.id;
                         const isDone = completedLessons.includes(les.id);
 
                         return (
@@ -448,21 +476,19 @@ export default function DashboardPage() {
                             className={`w-full text-left py-2.5 px-3 rounded flex items-center justify-between text-xs transition cursor-pointer ${
                               isSelectedLesson
                                 ? 'bg-matrix/10 text-matrix font-mono font-bold border border-matrix/50 shadow-[0_0_20px_rgba(0,230,90,0.15)]'
-                                : 'text-white/70 hover:text-white hover:bg-white/5 border border-transparent font-mono'
+                                : 'text-white/70 hover:text-white hover:bg-white/[0.03]'
                             }`}
                           >
                             <div className="flex items-center gap-2.5 min-w-0 pr-2">
                               {isDone ? (
                                 <CheckCircle2 className="w-3.5 h-3.5 text-matrix shrink-0" />
-                              ) : isSelectedLesson ? (
-                                <Play className="w-3.5 h-3.5 text-matrix fill-matrix shrink-0" />
                               ) : (
                                 <Circle className="w-3.5 h-3.5 text-white/30 shrink-0" />
                               )}
                               <span className="truncate">{les.title}</span>
                             </div>
                             <span className="font-mono text-[10px] text-white/40 shrink-0">
-                              {les.duration}
+                              {les.duration || '12 min'}
                             </span>
                           </button>
                         );
@@ -512,7 +538,7 @@ export default function DashboardPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div>
               <div className="flex items-center gap-2 font-mono text-xs text-matrix uppercase tracking-[0.2em]">
-                <span>CHAPTER {activeChapter.number}</span>
+                <span>MODULE {activeChapter.orderIndex + 1}</span>
                 <span className="text-white/40">/</span>
                 <span className="text-gold">{activeChapter.title}</span>
               </div>
@@ -536,15 +562,9 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* VIDEO CINEMA CONTAINER (Matching blueprint-landing video cards) */}
+          {/* VIDEO CINEMA CONTAINER WITH REAL VIDALYTICS STREAM */}
           <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-matrix/50 bg-black shadow-[0_0_50px_rgba(0,230,90,0.15)] group">
-            <iframe
-              src={activeLesson.videoUrl}
-              title={activeLesson.title}
-              className="w-full h-full border-0 rounded-xl"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            <VidalyticsPlayer videoUrl={activeLesson.videoUrl} />
           </div>
 
           {/* LESSON NAVIGATION BAR */}
@@ -556,7 +576,7 @@ export default function DashboardPage() {
                   className="btn-ghost-matrix !py-2 !px-4 !text-xs font-mono"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Previous: {prevLesson.title}</span>
+                  <span className="hidden sm:inline">Previous: {prevLesson.lesson.title}</span>
                   <span className="sm:hidden">Previous</span>
                 </button>
               ) : (
@@ -587,7 +607,7 @@ export default function DashboardPage() {
                     : 'border-transparent text-white/50 hover:text-white'
                 }`}
               >
-                1. Overview & Action Plan
+                1. Lesson Brief & Details
               </button>
 
               <button
@@ -598,8 +618,10 @@ export default function DashboardPage() {
                     : 'border-transparent text-white/50 hover:text-white'
                 }`}
               >
-                <Download className="w-3.5 h-3.5" />
-                <span>2. Resources ({activeLesson.resources.length})</span>
+                2. Toolkit & Downloads
+                <span className="px-1.5 py-0.5 text-[9px] rounded bg-white/10 text-gold">
+                  {activeLesson.attachments?.length || 0}
+                </span>
               </button>
 
               <button
@@ -610,203 +632,205 @@ export default function DashboardPage() {
                     : 'border-transparent text-white/50 hover:text-white'
                 }`}
               >
-                <FileText className="w-3.5 h-3.5" />
-                <span>3. Lesson Notes</span>
-                {noteContent && <span className="w-2 h-2 rounded-full bg-matrix" />}
+                3. Private Notes
+                {noteContent.trim().length > 0 && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-matrix"></span>
+                )}
               </button>
 
               <button
                 onClick={() => setActiveTab('software')}
                 className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${
                   activeTab === 'software'
-                    ? 'border-gold text-gold font-bold'
-                    : 'border-transparent text-white/50 hover:text-gold'
+                    ? 'border-matrix text-matrix font-bold'
+                    : 'border-transparent text-gold hover:text-white'
                 }`}
               >
-                <Zap className="w-3.5 h-3.5 fill-gold" />
-                <span>4. Software Platform</span>
+                <Zap className="w-3.5 h-3.5 text-gold" />
+                4. Software Scaling (50% Off)
               </button>
             </div>
 
-            {/* TAB 1: OVERVIEW */}
+            {/* TAB CONTENT: 1. OVERVIEW */}
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-display font-bold text-lg text-white mb-2">Lesson Breakdown</h3>
-                  <p className="text-white/80 text-sm leading-relaxed">
-                    {activeLesson.description}
-                  </p>
+                  <h3 className="font-mono text-xs font-bold text-matrix uppercase tracking-widest mb-2">
+                    // LESSON SUMMARY & INSTRUCTIONS
+                  </h3>
+                  <div className="font-sans text-sm text-white/80 leading-relaxed space-y-4 whitespace-pre-line bg-black/40 p-5 rounded-xl border border-white/5">
+                    {activeLesson.description || 'Watch the video training above and complete the action items.'}
+                  </div>
                 </div>
 
-                {/* Implementation Checklist */}
-                <div className="p-5 rounded-xl border border-matrix/30 bg-black/60 space-y-3.5">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-matrix flex items-center gap-2">
-                      <CheckSquare className="w-4 h-4" /> Implementation Action Items
-                    </span>
-                    <span className="font-mono text-[10px] text-white/40">
-                      Check off as you complete
-                    </span>
-                  </div>
-
+                {/* Quick Action Checklist */}
+                <div>
+                  <h3 className="font-mono text-xs font-bold text-gold uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <CheckSquare className="w-4 h-4 text-gold" />
+                    ACTION ITEMS FOR THIS LESSON
+                  </h3>
                   <div className="space-y-2">
-                    {actionItems.map((item, idx) => {
-                      const isChecked = !!checklist[idx];
+                    {[
+                      'Watch the video lesson completely',
+                      'Review the prompt template and resource links',
+                      'Execute the steps in your freelancer workspace',
+                      'Mark this lesson complete and proceed'
+                    ].map((step, idx) => {
+                      const isDone = !!checklist[`${activeLesson.id}_${idx}`];
                       return (
-                        <button
+                        <div
                           key={idx}
-                          onClick={() => toggleChecklistItem(idx)}
-                          className={`w-full text-left p-3 rounded border flex items-start gap-3 transition cursor-pointer ${
-                            isChecked
-                              ? 'bg-matrix/10 border-matrix/40 text-white/50'
-                              : 'bg-white/[0.02] border-white/10 text-white/90 hover:border-matrix/30'
+                          onClick={() => handleToggleChecklistItem(idx)}
+                          className={`p-3.5 rounded-xl border transition flex items-start gap-3 cursor-pointer ${
+                            isDone
+                              ? 'bg-matrix/10 border-matrix/40 text-white'
+                              : 'bg-black/40 border-white/10 text-white/70 hover:border-white/20'
                           }`}
                         >
                           <div className="mt-0.5 text-matrix shrink-0">
-                            {isChecked ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4 text-white/40" />}
+                            {isDone ? (
+                              <CheckSquare className="w-4 h-4 text-matrix" />
+                            ) : (
+                              <Square className="w-4 h-4 text-white/40" />
+                            )}
                           </div>
-                          <span className={`text-xs md:text-sm leading-relaxed ${isChecked ? 'line-through text-white/40' : 'text-white/90'}`}>
-                            {item}
+                          <span className={`text-xs font-sans ${isDone ? 'line-through text-white/50' : 'text-white/90'}`}>
+                            {step}
                           </span>
-                        </button>
+                        </div>
                       );
                     })}
                   </div>
                 </div>
-
-                <div className="p-4 rounded-xl border border-gold/30 bg-gold/5 font-mono text-xs space-y-1">
-                  <div className="text-gold font-bold uppercase tracking-wider">// Chapter Core Objective:</div>
-                  <div className="text-white/80">{activeChapter.description}</div>
-                </div>
               </div>
             )}
 
-            {/* TAB 2: RESOURCES */}
+            {/* TAB CONTENT: 2. RESOURCES */}
             {activeTab === 'resources' && (
               <div className="space-y-4">
-                <p className="font-mono text-xs text-white/50">
-                  Download templates, worksheets, and cold outreach scripts for this lesson:
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {activeLesson.resources.map((res, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-matrix/50 transition group"
-                    >
-                      <div className="flex items-center gap-3 min-w-0 pr-3">
-                        <div className="p-2.5 rounded bg-matrix/10 text-matrix group-hover:bg-matrix group-hover:text-black transition">
-                          <FileText className="w-4 h-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <span className="font-display text-sm font-bold text-white block truncate">{res.title}</span>
-                          <span className="font-mono text-[10px] text-matrix uppercase">{res.type} Format</span>
-                        </div>
-                      </div>
-
-                      <a
-                        href={res.url}
-                        download
-                        className="btn-ghost-matrix !py-1.5 !px-3 !text-xs shrink-0"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Download</span>
-                      </a>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between">
+                  <h3 className="font-mono text-xs font-bold text-matrix uppercase tracking-widest">
+                    // ATTACHED ASSETS & TEMPLATES
+                  </h3>
                 </div>
+
+                {activeLesson.attachments && activeLesson.attachments.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {activeLesson.attachments.map((att: any, idx: number) => (
+                      <a
+                        key={idx}
+                        href={att.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-4 rounded-xl border border-white/10 bg-black/40 hover:border-matrix/50 hover:bg-matrix/5 transition flex items-center justify-between group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="p-2 rounded bg-matrix/10 text-matrix group-hover:scale-110 transition">
+                            <FileText className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="font-mono text-xs font-bold text-white truncate">{att.title || 'Downloadable Asset'}</h4>
+                            <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">{att.type || 'DOCUMENT'}</span>
+                          </div>
+                        </div>
+                        <Download className="w-4 h-4 text-white/40 group-hover:text-matrix transition shrink-0" />
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-6 rounded-xl border border-white/5 bg-black/40 text-center text-white/40 font-mono text-xs">
+                    All templates and links for this lesson are contained inside the Lesson Brief tab above.
+                  </div>
+                )}
               </div>
             )}
 
-            {/* TAB 3: NOTES */}
+            {/* TAB CONTENT: 3. NOTES */}
             {activeTab === 'notes' && (
               <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <label className="font-mono text-xs text-white/60 uppercase">
-                    Personal Action Notes for: <strong className="text-white">{activeLesson.title}</strong>
-                  </label>
-
-                  <div className="flex items-center gap-2">
-                    {noteSavedNotice && (
-                      <span className="font-mono text-xs text-matrix font-bold animate-fade-in">
-                        ✓ Saved!
-                      </span>
-                    )}
-                    <button
-                      onClick={handleDownloadNotes}
-                      disabled={!noteContent}
-                      className="btn-ghost-matrix !py-1.5 !px-3 !text-xs disabled:opacity-40"
-                    >
-                      Export .txt
-                    </button>
-                    <button
-                      onClick={handleSaveNote}
-                      disabled={savingNote}
-                      className="btn-gold !py-1.5 !px-3.5 !text-xs"
-                    >
-                      <Save className="w-3.5 h-3.5" />
-                      <span>{savingNote ? 'Saving...' : 'Save Notes'}</span>
-                    </button>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-mono text-xs font-bold text-matrix uppercase tracking-widest">
+                      // PRIVATE STUDENT NOTEBOOK
+                    </h3>
+                    <p className="font-mono text-[11px] text-white/40">Auto-saved to your personal cloud database profile.</p>
                   </div>
+                  {noteSavedNotice && (
+                    <span className="font-mono text-xs text-matrix flex items-center gap-1.5 animate-bounce">
+                      <Check className="w-3.5 h-3.5" /> Saved!
+                    </span>
+                  )}
                 </div>
 
                 <textarea
-                  rows={9}
                   value={noteContent}
                   onChange={(e) => setNoteContent(e.target.value)}
-                  placeholder="Record your action items, target niches, and discovery notes here..."
-                  className="w-full bg-black/60 border border-white/10 focus:border-matrix rounded-xl p-4 text-sm text-white placeholder-white/30 outline-none font-mono leading-relaxed transition"
+                  placeholder="Type your notes, lead details, client outreach ideas, or prompt adaptations for this lesson..."
+                  className="w-full h-44 bg-black/60 border border-white/10 focus:border-matrix rounded-xl p-4 font-mono text-xs text-white placeholder-white/20 outline-none resize-none transition"
                 />
+
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleSaveNote}
+                    disabled={savingNote}
+                    className="btn-gold !py-2.5 !px-6 !text-xs font-mono flex items-center gap-2"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>{savingNote ? 'Saving Notes...' : 'Save Lesson Note'}</span>
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* TAB 4: SOFTWARE VAULT */}
+            {/* TAB CONTENT: 4. SOFTWARE UPGRADE */}
             {activeTab === 'software' && (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-display font-black text-xl text-white mb-1 flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-gold fill-gold" /> BPO Accelerator Automated Software Suite
-                  </h3>
-                  <p className="text-white/70 text-sm leading-relaxed">
-                    Automate lead scraping, cold outreach, and client proposals with the complete software ecosystem.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-1.5">
-                    <span className="font-mono text-xs font-bold text-matrix block">01. AI Lead Scraper & Prospector</span>
-                    <p className="text-xs text-white/60">Extract verified decision-maker emails, phone numbers, and company revenues in seconds.</p>
+              <div className="p-6 md:p-8 rounded-2xl border border-gold/40 bg-gradient-to-br from-gold/10 via-black to-black space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-gold/20 text-gold border border-gold/30">
+                    <Zap className="w-6 h-6" />
                   </div>
-
-                  <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-1.5">
-                    <span className="font-mono text-xs font-bold text-matrix block">02. Proposal & Contract Builder</span>
-                    <p className="text-xs text-white/60">Generate high-converting custom agency proposals and contracts in 1 click.</p>
-                  </div>
-
-                  <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-1.5">
-                    <span className="font-mono text-xs font-bold text-matrix block">03. Weekly Live Zoom Coaching</span>
-                    <p className="text-xs text-white/60">Join Chris McLaren weekly to review lead campaigns and close deals live.</p>
-                  </div>
-
-                  <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-1.5">
-                    <span className="font-mono text-xs font-bold text-matrix block">04. VIP Community Network</span>
-                    <p className="text-xs text-white/60">Network with 6-figure agency owners, exchange talent, and partner on contracts.</p>
+                  <div>
+                    <span className="font-mono text-[11px] uppercase tracking-widest text-gold font-bold">VIP STUDENT UPGRADE</span>
+                    <h3 className="font-display font-black text-xl md:text-2xl text-white">
+                      BPO Accelerator Auto-Bidding & Outreach Suite
+                    </h3>
                   </div>
                 </div>
 
-                <div className="p-6 rounded-xl border border-gold/40 bg-gradient-to-r from-gold/10 to-matrix/10 text-center space-y-3">
-                  <h4 className="font-display font-black text-xl text-white">
-                    Exclusive Student Privilege: 50% OFF
-                  </h4>
-                  <p className="text-xs text-white/70 max-w-md mx-auto">
-                    Use your blueprint student discount to unlock the full BPO Accelerator software platform.
-                  </p>
+                <p className="font-sans text-xs md:text-sm text-white/80 leading-relaxed">
+                  You have lifetime access to <strong>The BPO Blueprint</strong> training. When you are ready to automate your lead discovery, auto-sync proposals, and connect directly with high-ticket clients, activate the full BPO Accelerator software.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
+                  <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
+                    <span className="text-matrix font-bold block mb-1">⚡ Auto-Bidding</span>
+                    <span className="text-white/60 text-[11px]">Sync proposals across Freelancer & Upwork in seconds.</span>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
+                    <span className="text-matrix font-bold block mb-1">🎯 Direct Lead Scraper</span>
+                    <span className="text-white/60 text-[11px]">Direct company owner phone numbers & emails.</span>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
+                    <span className="text-matrix font-bold block mb-1">📞 Weekly Live Calls</span>
+                    <span className="text-white/60 text-[11px]">Private strategy workshops & contract reviews with Chris.</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
                   <button
                     onClick={() => setShowUpsellModal(true)}
-                    className="btn-gold !py-3 !px-8 !text-xs mt-2"
+                    className="w-full sm:w-auto btn-gold !py-3 !px-8 !text-xs font-mono"
                   >
-                    Claim 50% OFF Software →
+                    Claim 50% Student Discount →
                   </button>
+                  <a
+                    href="https://bpoaccelerator.ai"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-xs text-white/60 hover:text-white underline"
+                  >
+                    Learn more about the software suite
+                  </a>
                 </div>
               </div>
             )}
@@ -814,77 +838,71 @@ export default function DashboardPage() {
         </main>
       </div>
 
-      {/* 4. UPGRADE MODAL */}
+      {/* 4. MODALS */}
+      {/* Earnings Modal */}
+      {showEarningsModal && (
+        <LogEarningsModal
+          isOpen={showEarningsModal}
+          userId={user?.id}
+          onClose={() => setShowEarningsModal(false)}
+          onEarningsUpdated={(newTotal) => setUserTotalEarnings(newTotal)}
+        />
+      )}
+
+      {/* Software 50% Upsell Modal */}
       {showUpsellModal && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-gold/40 bg-black p-6 md:p-8 space-y-5 relative shadow-[0_0_60px_rgba(212,175,55,0.2)]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="bg-black border border-gold/50 rounded-2xl max-w-lg w-full p-6 md:p-8 space-y-6 shadow-[0_0_80px_rgba(212,175,55,0.2)] relative">
             <button
               onClick={() => setShowUpsellModal(false)}
-              className="absolute top-4 right-4 text-white/40 hover:text-white p-2 cursor-pointer"
+              className="absolute top-4 right-4 text-white/40 hover:text-white p-1"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="text-center space-y-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-gold/15 border border-gold/30 font-mono text-[10px] uppercase font-bold text-gold">
-                ⚡ Exclusive Student Upgrade
+            <div className="space-y-2">
+              <span className="font-mono text-xs uppercase tracking-widest text-gold font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                Special 50% Blueprint Student Voucher
               </span>
               <h3 className="font-display font-black text-2xl text-white">
-                BPO Accelerator Software & Live Coaching
+                Unlock BPO Accelerator Suite
               </h3>
-              <p className="text-xs text-white/60">
-                Automate your outreach with lead scrapers, proposal generators, and weekly live calls with Chris McLaren.
+              <p className="font-sans text-xs text-white/70 leading-relaxed">
+                Take your agency to R100,000/month by unlocking AI lead scrapers, automated proposal dispatchers, and live weekly coaching calls.
               </p>
             </div>
 
-            <div className="space-y-2 text-xs text-white/80 bg-white/[0.02] p-4 rounded-xl border border-white/5">
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-matrix shrink-0" />
-                <span>Unlimited verified B2B email and LinkedIn lead scraping</span>
+            <div className="p-4 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-between">
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-white/50 block">Your Exclusive Coupon</span>
+                <span className="font-mono text-base font-bold text-gold">BLUEPRINT50</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-matrix shrink-0" />
-                <span>AI agency proposal and contract generator</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-matrix shrink-0" />
-                <span>Weekly live Zoom deal breakdown & coaching sessions</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-matrix shrink-0" />
-                <span>Exclusive VIP Discord access with top agency operators</span>
-              </div>
+              <span className="font-mono text-xs font-black text-matrix bg-matrix/10 px-3 py-1 rounded border border-matrix/30">
+                50% OFF FOREVER
+              </span>
             </div>
 
-            <div className="text-center space-y-3">
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-white/40 line-through text-base font-mono">R2,499/mo</span>
-                <span className="text-matrix font-black text-2xl font-mono">R1,249.50</span>
-                <span className="px-2 py-0.5 rounded bg-matrix/20 text-matrix font-mono text-[10px] font-bold">
-                  50% OFF FIRST MONTH
-                </span>
-              </div>
-
+            <div className="space-y-3 pt-2">
               <a
-                href="https://whop.com/checkout/plan_OJny69V9b2Utm?promo=50OFF"
+                href="https://app.bpoaccelerator.ai/signup?coupon=BLUEPRINT50"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-gold w-full !py-3.5 !text-xs font-bold"
+                className="w-full btn-gold !py-3.5 !text-xs font-mono flex items-center justify-center gap-2"
               >
-                Claim 50% Coupon & Upgrade →
+                <span>Activate BPO Accelerator Software</span>
+                <ArrowRight className="w-4 h-4" />
               </a>
+              <button
+                onClick={() => setShowUpsellModal(false)}
+                className="w-full text-center font-mono text-xs text-white/40 hover:text-white py-1"
+              >
+                Maybe later
+              </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* 5. LOG EARNINGS MODAL */}
-      <LogEarningsModal
-        isOpen={showEarningsModal}
-        onClose={() => setShowEarningsModal(false)}
-        userId={user.id}
-        onEarningsUpdated={(total) => setUserTotalEarnings(total)}
-      />
     </div>
   );
 }
