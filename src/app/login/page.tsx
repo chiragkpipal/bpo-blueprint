@@ -13,19 +13,42 @@ export default function LoginPage() {
   const [registeredNotice, setRegisteredNotice] = useState(false);
 
   const [isSandboxNotice, setIsSandboxNotice] = useState(false);
+  const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('registered') === 'true' || params.get('payment') === 'success') {
+      const isSuccess = params.get('payment') === 'success' || params.get('registered') === 'true';
+      const isSb = params.get('sandbox') === 'true' || process.env.NEXT_PUBLIC_BLUEPRINT_PAYMENTS_TEST === 'true';
+      const pId = params.get('payment_id') || params.get('session_id');
+      const emailParam = params.get('email');
+
+      if (isSuccess) {
         setRegisteredNotice(true);
+        setPaymentSuccess(true);
       }
-      if (params.get('sandbox') === 'true' || process.env.NEXT_PUBLIC_BLUEPRINT_PAYMENTS_TEST === 'true') {
+      if (isSb) {
         setIsSandboxNotice(true);
       }
-      const emailParam = params.get('email');
+      if (pId) {
+        setPaymentId(pId);
+      }
       if (emailParam) {
         setEmail(emailParam);
+      }
+
+      // Proactively confirm and activate access in background if returning from payment
+      if (isSuccess && emailParam) {
+        fetch('/api/confirm-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: emailParam,
+            paymentId: pId,
+            sandbox: isSb
+          })
+        }).catch(console.error);
       }
     }
   }, []);
@@ -39,7 +62,13 @@ export default function LoginPage() {
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+          paymentId,
+          paymentSuccess,
+          sandbox: isSandboxNotice
+        }),
       });
 
       const data = await res.json();
