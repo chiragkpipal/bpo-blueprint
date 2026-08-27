@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
       const { data: user, error } = await supabase
         .from('lms_users')
-        .select('id, email, full_name, status, password_hash')
+        .select('id, email, full_name, status, password_hash, payment_session_id')
         .eq('email', cleanEmail)
         .maybeSingle();
 
