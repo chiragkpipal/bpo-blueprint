@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, ArrowRight, CheckCircle2, Shield } from 'lucide-react';
+import { Lock, Mail, ArrowRight, CheckCircle2, Shield, Zap } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -87,37 +88,45 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
-      {/* Background Matrix/Glow Styling */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,255,102,0.08)_0%,transparent_70%)] pointer-events-none" />
+    <div className="min-h-screen bg-[#050505] text-white flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden selection:bg-[#00ff66] selection:text-black">
+      {/* Background Matrix/Glow Ambient Light */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,255,102,0.12)_0%,transparent_70%)] pointer-events-none" />
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-md relative z-10 space-y-6">
         {/* Brand */}
-        <div className="text-center mb-8">
-          <h1 className="font-black text-3xl md:text-4xl text-white tracking-tight">
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center gap-2 font-mono text-xs text-[#00ff66] tracking-widest uppercase">
+            <span>[◉]</span>
+            <span>STUDENT LEARNING PORTAL</span>
+          </div>
+          <h1 className="font-display font-black text-3xl md:text-4xl text-white tracking-tight">
             BPO<span className="text-[#d4af37]">.</span>BLUEPRINT
           </h1>
+          <p className="text-xs text-white/50 font-mono">
+            Sign the client. Outsource delivery. Keep the margin.
+          </p>
+
           {isSandboxNotice && (
-            <div className="mt-2 inline-block px-2.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+            <div className="mt-2 inline-block px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider">
               ⚡ Sandbox / Test Mode
             </div>
           )}
         </div>
 
         {registeredNotice && (
-          <div className="mb-6 p-4 rounded-xl bg-[#00ff66]/10 border border-[#00ff66]/30 flex items-start gap-3">
+          <div className="p-4 rounded-xl bg-[#00ff66]/10 border border-[#00ff66]/40 flex items-start gap-3 shadow-[0_0_30px_rgba(0,255,102,0.15)]">
             <CheckCircle2 className="w-5 h-5 text-[#00ff66] shrink-0 mt-0.5" />
-            <div className="text-xs text-[#00ff66]">
-              <strong className="font-bold block">Payment Confirmed!</strong>
-              Your access to The BPO Blueprint is active. Enter your details below to log in.
+            <div className="text-xs text-[#00ff66] leading-relaxed">
+              <strong className="font-bold block uppercase tracking-wider mb-0.5">Payment Confirmed!</strong>
+              Your lifetime access to The BPO Blueprint is active. Enter your details below to enter the dashboard.
             </div>
           </div>
         )}
 
         {/* Card */}
-        <div className="glass-panel p-6 md:p-8 rounded-2xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+        <div className="glass-panel p-6 md:p-8 rounded-2xl border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.9)] space-y-5">
           {error && (
-            <div className="mb-5 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+            <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs leading-relaxed">
               {error}
             </div>
           )}
@@ -125,10 +134,10 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-[11px] font-mono uppercase tracking-wider text-white/60 mb-1.5">
-                Email Address
+                Registered Email Address
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-white/40">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-white/40">
                   <Mail className="w-4 h-4" />
                 </span>
                 <input
@@ -137,7 +146,7 @@ export default function LoginPage() {
                   placeholder="you@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/[0.03] border border-white/10 focus:border-[#00ff66] rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors"
+                  className="w-full bg-white/[0.03] border border-white/10 focus:border-[#00ff66] rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors font-mono"
                 />
               </div>
             </div>
@@ -147,7 +156,7 @@ export default function LoginPage() {
                 Password
               </label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-white/40">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-white/40">
                   <Lock className="w-4 h-4" />
                 </span>
                 <input
@@ -156,7 +165,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/[0.03] border border-white/10 focus:border-[#00ff66] rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors"
+                  className="w-full bg-white/[0.03] border border-white/10 focus:border-[#00ff66] rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors font-mono"
                 />
               </div>
             </div>
@@ -164,7 +173,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#00ff66] text-black font-extrabold py-3.5 rounded-xl hover:bg-[#00ff66]/90 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2"
+              className="btn-gold w-full !py-3.5 !text-xs mt-2 disabled:opacity-50"
             >
               {loading ? "Authenticating..." : "Access Dashboard"}
               <ArrowRight className="w-4 h-4" />
@@ -172,7 +181,7 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <div className="mt-8 text-center flex items-center justify-center gap-4 text-xs font-mono text-white/40">
+        <div className="text-center flex items-center justify-center gap-4 text-xs font-mono text-white/40">
           <Link href="/terms" className="hover:text-[#00ff66] transition">Terms of Service</Link>
           <span>·</span>
           <Link href="/privacy" className="hover:text-[#00ff66] transition">Privacy Policy</Link>
