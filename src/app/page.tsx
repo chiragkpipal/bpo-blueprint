@@ -655,52 +655,18 @@ export default function DashboardPage() {
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-mono text-xs font-bold text-matrix uppercase tracking-widest mb-2">
-                    // LESSON SUMMARY & INSTRUCTIONS
+                  <h3 className="font-mono text-xs font-bold text-matrix uppercase tracking-widest mb-3">
+                    // LESSON INSTRUCTIONS & DETAILS
                   </h3>
-                  <div className="font-sans text-sm text-white/80 leading-relaxed space-y-4 whitespace-pre-line bg-black/40 p-5 rounded-xl border border-white/5">
-                    {activeLesson.description || 'Watch the video training above and complete the action items.'}
-                  </div>
-                </div>
-
-                {/* Quick Action Checklist */}
-                <div>
-                  <h3 className="font-mono text-xs font-bold text-gold uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <CheckSquare className="w-4 h-4 text-gold" />
-                    ACTION ITEMS FOR THIS LESSON
-                  </h3>
-                  <div className="space-y-2">
-                    {[
-                      'Watch the video lesson completely',
-                      'Review the prompt template and resource links',
-                      'Execute the steps in your freelancer workspace',
-                      'Mark this lesson complete and proceed'
-                    ].map((step, idx) => {
-                      const isDone = !!checklist[`${activeLesson.id}_${idx}`];
-                      return (
-                        <div
-                          key={idx}
-                          onClick={() => handleToggleChecklistItem(idx)}
-                          className={`p-3.5 rounded-xl border transition flex items-start gap-3 cursor-pointer ${
-                            isDone
-                              ? 'bg-matrix/10 border-matrix/40 text-white'
-                              : 'bg-black/40 border-white/10 text-white/70 hover:border-white/20'
-                          }`}
-                        >
-                          <div className="mt-0.5 text-matrix shrink-0">
-                            {isDone ? (
-                              <CheckSquare className="w-4 h-4 text-matrix" />
-                            ) : (
-                              <Square className="w-4 h-4 text-white/40" />
-                            )}
-                          </div>
-                          <span className={`text-xs font-sans ${isDone ? 'line-through text-white/50' : 'text-white/90'}`}>
-                            {step}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  {activeLesson.description ? (
+                    <div className="font-sans text-sm text-white/90 leading-relaxed space-y-4 whitespace-pre-line bg-black/40 p-6 rounded-xl border border-white/10">
+                      {activeLesson.description}
+                    </div>
+                  ) : (
+                    <div className="font-mono text-xs text-white/40 bg-black/40 p-6 rounded-xl border border-white/5 text-center">
+                      No additional notes provided for this lesson. Watch the video stream above.
+                    </div>
+                  )}
                 </div>
               </div>
             )}
