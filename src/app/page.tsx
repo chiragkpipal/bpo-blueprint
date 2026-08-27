@@ -501,27 +501,77 @@ export default function DashboardPage() {
             })}
           </div>
 
-          {/* Sidebar Footer Widget */}
-          <div className="p-3.5 border-t border-matrix/30 bg-black space-y-2">
-            <div className="p-3 rounded border border-white/10 bg-white/[0.02] flex items-center justify-between">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="p-1.5 rounded bg-matrix/10 text-matrix shrink-0">
-                  <Trophy className="w-4 h-4" />
+          {/* Sidebar Action & Offer Buttons */}
+          <div className="p-3.5 border-t border-matrix/30 bg-black space-y-2.5 shrink-0">
+            {/* 1. Log Your Earnings Button */}
+            <button
+              onClick={() => setShowEarningsModal(true)}
+              className="w-full p-3 rounded-xl border border-matrix/40 bg-gradient-to-r from-matrix/15 via-matrix/10 to-transparent hover:from-matrix/25 hover:to-matrix/10 hover:border-matrix transition-all text-left flex items-center justify-between group cursor-pointer shadow-[0_0_20px_rgba(0,255,102,0.1)]"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="p-2 rounded-lg bg-matrix/20 text-matrix group-hover:scale-110 transition-transform shrink-0">
+                  <Trophy className="w-4 h-4 text-matrix" />
                 </div>
                 <div className="min-w-0">
-                  <span className="font-mono text-[10px] uppercase text-white/40 block truncate">Total Verified</span>
-                  <span className="font-mono text-xs font-bold text-matrix truncate block">
-                    R{userTotalEarnings.toLocaleString()}
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-white/50 block">Student Deal Tracker</span>
+                  <span className="font-display text-xs font-bold text-white group-hover:text-matrix transition-colors block">
+                    Log Your Earnings
                   </span>
                 </div>
               </div>
-              <button
-                onClick={() => setShowEarningsModal(true)}
-                className="btn-gold !py-1.5 !px-3 !text-[10px]"
-              >
-                + Log Deal
-              </button>
-            </div>
+              <div className="text-right shrink-0">
+                <span className="font-mono text-xs font-bold text-matrix block">
+                  R{userTotalEarnings.toLocaleString()}
+                </span>
+                <span className="font-mono text-[9px] text-white/40 block">Verified</span>
+              </div>
+            </button>
+
+            {/* 2. Big 50% Off BPO Accelerator Software Button */}
+            <a
+              href="https://commas.com/checkout/J11VoPXJygAHFKaTl"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full p-3.5 rounded-xl border border-[#ffb400]/60 bg-gradient-to-r from-[#ff8c00]/25 via-[#ffb400]/20 to-[#ff8c00]/10 hover:from-[#ff8c00]/35 hover:to-[#ffb400]/25 hover:border-[#ffb400] transition-all flex items-center gap-3 text-left group cursor-pointer shadow-[0_0_25px_rgba(255,180,0,0.2)] block"
+            >
+              <div className="p-2.5 rounded-lg bg-[#ffb400]/20 text-[#ffb400] group-hover:scale-110 transition-transform shrink-0 border border-[#ffb400]/30">
+                <Zap className="w-5 h-5 text-[#ffb400] fill-[#ffb400]/30 animate-pulse" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="bg-[#ffb400] text-black font-mono font-black text-[9px] px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    50% OFF
+                  </span>
+                  <span className="font-mono text-[10px] text-[#ffb400] uppercase font-bold tracking-wider">Software & Calls</span>
+                </div>
+                <span className="font-display text-xs font-black text-white group-hover:text-[#ffb400] transition-colors block leading-tight mt-0.5">
+                  Get 50% off on BPO Accelerator
+                </span>
+                <span className="font-mono text-[10px] text-white/50 block truncate">
+                  Outreach, Auto-Bidding & Calls →
+                </span>
+              </div>
+            </a>
+
+            {/* 3. 50+ Work Examples Button */}
+            <a
+              href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full p-3 rounded-xl border border-white/15 bg-white/[0.03] hover:bg-white/[0.07] hover:border-matrix/50 transition-all flex items-center gap-3 text-left group cursor-pointer block"
+            >
+              <div className="p-2 rounded-lg bg-matrix/15 text-matrix group-hover:scale-110 transition-transform shrink-0">
+                <BookOpen className="w-4 h-4 text-matrix" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="font-display text-xs font-bold text-white group-hover:text-matrix transition-colors block leading-tight">
+                  Get 50+ Examples of Websites, Apps & Games
+                </span>
+                <span className="font-mono text-[10px] text-white/40 block truncate mt-0.5">
+                  Full Client Portfolio (R2,000) →
+                </span>
+              </div>
+            </a>
           </div>
         </aside>
 
