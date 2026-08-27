@@ -5,11 +5,22 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    // 1. Fetch modules
-    const { data: modulesData, error: modErr } = await supabase
+    // 1. Fetch modules exclusively for The BPO Blueprint Course
+    const BLUEPRINT_COURSE_ID = 'b0b00000-0000-4000-a000-000000000001';
+    let { data: modulesData, error: modErr } = await supabase
       .from('modules')
       .select('*')
+      .eq('course_id', BLUEPRINT_COURSE_ID)
       .order('order_index', { ascending: true });
+
+    // Fallback if course_id hasn't been set
+    if (!modulesData || modulesData.length === 0) {
+      const fallback = await supabase
+        .from('modules')
+        .select('*')
+        .order('order_index', { ascending: true });
+      modulesData = fallback.data;
+    }
 
     if (modErr) {
       console.error('Error fetching modules:', modErr);
