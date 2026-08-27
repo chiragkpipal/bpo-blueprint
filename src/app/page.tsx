@@ -168,6 +168,11 @@ export default function DashboardPage() {
           <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-[#00ff66]/10 text-[#00ff66] border border-[#00ff66]/20 font-mono text-[10px] uppercase font-bold">
             Course Dashboard
           </span>
+          {process.env.NEXT_PUBLIC_BLUEPRINT_PAYMENTS_TEST === 'true' && (
+            <span className="hidden sm:inline-block px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-[9px] uppercase font-bold">
+              Sandbox Test Mode
+            </span>
+          )}
         </div>
 
         {/* Global Progress Bar */}

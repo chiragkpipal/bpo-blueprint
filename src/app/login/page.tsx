@@ -12,11 +12,20 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [registeredNotice, setRegisteredNotice] = useState(false);
 
+  const [isSandboxNotice, setIsSandboxNotice] = useState(false);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('registered') === 'true' || params.get('payment') === 'success') {
         setRegisteredNotice(true);
+      }
+      if (params.get('sandbox') === 'true' || process.env.NEXT_PUBLIC_BLUEPRINT_PAYMENTS_TEST === 'true') {
+        setIsSandboxNotice(true);
+      }
+      const emailParam = params.get('email');
+      if (emailParam) {
+        setEmail(emailParam);
       }
     }
   }, []);
@@ -59,7 +68,11 @@ export default function LoginPage() {
           <h1 className="font-black text-3xl md:text-4xl text-white tracking-tight">
             BPO<span className="text-[#d4af37]">.</span>BLUEPRINT
           </h1>
-
+          {isSandboxNotice && (
+            <div className="mt-2 inline-block px-2.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+              ⚡ Sandbox / Test Mode
+            </div>
+          )}
         </div>
 
         {registeredNotice && (
