@@ -32,7 +32,7 @@ interface Chapter {
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  
+
   // Dynamic Course State from Database
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loadingCourse, setLoadingCourse] = useState(true);
@@ -398,9 +398,8 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col lg:flex-row min-w-0 overflow-hidden relative">
         {/* SIDEBAR: CHAPTERS & LESSONS */}
         <aside
-          className={`fixed lg:static inset-y-0 left-0 z-40 w-80 sm:w-88 lg:w-80 xl:w-92 bg-black border-r border-matrix/30 flex flex-col shrink-0 transition-transform duration-300 ${
-            sidebarOpen ? 'translate-x-0 top-[96px] bottom-0' : '-translate-x-full lg:translate-x-0'
-          }`}
+          className={`fixed lg:static inset-y-0 left-0 z-40 w-80 sm:w-88 lg:w-80 xl:w-92 bg-black border-r border-matrix/30 flex flex-col shrink-0 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0 top-[96px] bottom-0' : '-translate-x-full lg:translate-x-0'
+            }`}
         >
           <div className="p-4 border-b border-matrix/30 bg-black flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -425,13 +424,11 @@ export default function DashboardPage() {
                   {/* Chapter Header */}
                   <button
                     onClick={() => setActiveChapter(ch)}
-                    className={`w-full text-left p-4 flex items-start gap-3 transition cursor-pointer ${
-                      isActiveChapter ? 'bg-white/[0.04] border-l-2 border-matrix' : 'hover:bg-white/[0.02]'
-                    }`}
+                    className={`w-full text-left p-4 flex items-start gap-3 transition cursor-pointer ${isActiveChapter ? 'bg-white/[0.04] border-l-2 border-matrix' : 'hover:bg-white/[0.02]'
+                      }`}
                   >
-                    <span className={`font-mono text-xs font-bold shrink-0 mt-0.5 ${
-                      isChapterDone ? 'text-matrix' : isActiveChapter ? 'text-matrix' : 'text-gold'
-                    }`}>
+                    <span className={`font-mono text-xs font-bold shrink-0 mt-0.5 ${isChapterDone ? 'text-matrix' : isActiveChapter ? 'text-matrix' : 'text-gold'
+                      }`}>
                       {(idx + 1).toString().padStart(2, '0')}
                     </span>
 
@@ -473,11 +470,10 @@ export default function DashboardPage() {
                               setSidebarOpen(false);
                               window.scrollTo({ top: 0, behavior: 'smooth' });
                             }}
-                            className={`w-full text-left py-2.5 px-3 rounded flex items-center justify-between text-xs transition cursor-pointer ${
-                              isSelectedLesson
-                                ? 'bg-matrix/10 text-matrix font-mono font-bold border border-matrix/50 shadow-[0_0_20px_rgba(0,230,90,0.15)]'
-                                : 'text-white/70 hover:text-white hover:bg-white/[0.03]'
-                            }`}
+                            className={`w-full text-left py-2.5 px-3 rounded flex items-center justify-between text-xs transition cursor-pointer ${isSelectedLesson
+                              ? 'bg-matrix/10 text-matrix font-mono font-bold border border-matrix/50 shadow-[0_0_20px_rgba(0,230,90,0.15)]'
+                              : 'text-white/70 hover:text-white hover:bg-white/[0.03]'
+                              }`}
                           >
                             <div className="flex items-center gap-2.5 min-w-0 pr-2">
                               {isDone ? (
@@ -550,11 +546,10 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3 shrink-0">
               <button
                 onClick={handleToggleCompleted}
-                className={`btn-ghost-matrix !py-2 !px-4 !text-xs ${
-                  completedLessons.includes(activeLesson.id)
-                    ? '!bg-matrix/15 !border-matrix !text-matrix shadow-[0_0_30px_rgba(0,230,90,0.3)]'
-                    : ''
-                }`}
+                className={`btn-ghost-matrix !py-2 !px-4 !text-xs ${completedLessons.includes(activeLesson.id)
+                  ? '!bg-matrix/15 !border-matrix !text-matrix shadow-[0_0_30px_rgba(0,230,90,0.3)]'
+                  : ''
+                  }`}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>{completedLessons.includes(activeLesson.id) ? 'Completed ✓' : 'Mark Completed'}</span>
@@ -601,22 +596,20 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3 sm:gap-6 border-b border-white/10 pb-3 overflow-x-auto custom-scrollbar font-mono text-xs uppercase tracking-widest">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`pb-2 border-b-2 transition cursor-pointer shrink-0 ${
-                  activeTab === 'overview'
-                    ? 'border-matrix text-matrix font-bold'
-                    : 'border-transparent text-white/50 hover:text-white'
-                }`}
+                className={`pb-2 border-b-2 transition cursor-pointer shrink-0 ${activeTab === 'overview'
+                  ? 'border-matrix text-matrix font-bold'
+                  : 'border-transparent text-white/50 hover:text-white'
+                  }`}
               >
                 1. Lesson Brief & Details
               </button>
 
               <button
                 onClick={() => setActiveTab('resources')}
-                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${
-                  activeTab === 'resources'
-                    ? 'border-matrix text-matrix font-bold'
-                    : 'border-transparent text-white/50 hover:text-white'
-                }`}
+                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${activeTab === 'resources'
+                  ? 'border-matrix text-matrix font-bold'
+                  : 'border-transparent text-white/50 hover:text-white'
+                  }`}
               >
                 2. Toolkit & Downloads
                 <span className="px-1.5 py-0.5 text-[9px] rounded bg-white/10 text-gold">
@@ -626,11 +619,10 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveTab('notes')}
-                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${
-                  activeTab === 'notes'
-                    ? 'border-matrix text-matrix font-bold'
-                    : 'border-transparent text-white/50 hover:text-white'
-                }`}
+                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${activeTab === 'notes'
+                  ? 'border-matrix text-matrix font-bold'
+                  : 'border-transparent text-white/50 hover:text-white'
+                  }`}
               >
                 3. Private Notes
                 {noteContent.trim().length > 0 && (
@@ -640,11 +632,10 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => setActiveTab('software')}
-                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${
-                  activeTab === 'software'
-                    ? 'border-matrix text-matrix font-bold'
-                    : 'border-transparent text-gold hover:text-white'
-                }`}
+                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${activeTab === 'software'
+                  ? 'border-matrix text-matrix font-bold'
+                  : 'border-transparent text-gold hover:text-white'
+                  }`}
               >
                 <Zap className="w-3.5 h-3.5 text-gold" />
                 4. Software Scaling (50% Off)
@@ -758,7 +749,7 @@ export default function DashboardPage() {
                   <div>
                     <span className="font-mono text-[11px] uppercase tracking-widest text-gold font-bold">VIP STUDENT UPGRADE</span>
                     <h3 className="font-display font-black text-xl md:text-2xl text-white">
-                      BPO Accelerator Auto-Bidding & Outreach Suite
+                      BPO Accelerator
                     </h3>
                   </div>
                 </div>
@@ -769,7 +760,7 @@ export default function DashboardPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs">
                   <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
-                    <span className="text-matrix font-bold block mb-1">⚡ Auto-Bidding</span>
+                    <span className="text-matrix font-bold block mb-1">⚡ Auto-Sync</span>
                     <span className="text-white/60 text-[11px]">Sync proposals across Freelancer & Upwork in seconds.</span>
                   </div>
                   <div className="p-3.5 rounded-xl bg-black/60 border border-white/10">
