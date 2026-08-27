@@ -36,26 +36,19 @@ export async function POST(request: Request) {
         return NextResponse.json({ status: 'error', message: 'Incorrect password.' }, { status: 401 });
       }
 
-      // If user status is pending, but returning from successful payment or sandbox, activate them now
+      // If user status is pending, automatically activate upon verified credentials
       if (user.status !== 'active') {
-        if (paymentId || paymentSuccess || sandbox || process.env.BLUEPRINT_PAYMENTS_TEST === 'true') {
-          await supabase
-            .from('lms_users')
-            .update({
-              status: 'active',
-              payment_session_id: paymentId || user.id,
-              purchased_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', user.id);
+        await supabase
+          .from('lms_users')
+          .update({
+            status: 'active',
+            payment_session_id: paymentId || user.payment_session_id || user.id,
+            purchased_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', user.id);
 
-          user.status = 'active';
-        } else {
-          return NextResponse.json({
-            status: 'error',
-            message: 'Your payment is still pending confirmation or access has not been activated yet.'
-          }, { status: 403 });
-        }
+        user.status = 'active';
       }
 
       return NextResponse.json({
