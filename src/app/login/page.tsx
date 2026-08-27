@@ -172,6 +172,11 @@ export default function LoginPage() {
           </form>
         </div>
 
+        <div className="mt-8 text-center flex items-center justify-center gap-4 text-xs font-mono text-white/40">
+          <Link href="/terms" className="hover:text-[#00ff66] transition">Terms of Service</Link>
+          <span>·</span>
+          <Link href="/privacy" className="hover:text-[#00ff66] transition">Privacy Policy</Link>
+        </div>
       </div>
     </div>
   );
