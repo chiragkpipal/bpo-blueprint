@@ -9,15 +9,58 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        matrix: "#00ff66",
-        gold: "#d4af37",
-        background: "#080808",
-        surface: "#111111",
-        "surface-border": "rgba(255, 255, 255, 0.08)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        matrix: {
+          DEFAULT: "var(--matrix)",
+          dim: "var(--matrix-dim)",
+        },
+        gold: {
+          DEFAULT: "var(--gold)",
+          dim: "var(--gold-dim)",
+        },
+        danger: "var(--danger)",
+        surface: "var(--surface)",
+        elevated: "var(--elevated)",
+      },
+      fontFamily: {
+        display: ["Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["DM Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
     },
   },
   plugins: [],
 };
-
 export default config;

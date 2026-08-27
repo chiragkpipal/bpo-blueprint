@@ -7,7 +7,7 @@ import {
   Play, CheckCircle2, Circle, FileText, Download, Save, Sparkles,
   LogOut, ChevronRight, ChevronDown, BookOpen, Layers, Zap, X,
   Trophy, ArrowRight, ArrowLeft, Clock, CheckSquare, Square,
-  ExternalLink, FileSpreadsheet, FileCode, Check
+  Check, Terminal
 } from 'lucide-react';
 import { LogEarningsModal } from '@/components/LogEarningsModal';
 
@@ -252,56 +252,54 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-[#090a0f] text-[#f8fafc] flex flex-col font-sans selection:bg-[#00f076] selection:text-black">
-      {/* 1. TOP APP BAR */}
-      <header className="sticky top-0 z-50 bg-[#090a0f]/90 backdrop-blur-xl border-b border-white/[0.07] px-4 md:px-8 py-3 flex items-center justify-between">
+    <div className="theme-blueprint min-h-screen bg-black text-white flex flex-col font-sans selection:bg-matrix selection:text-black">
+      {/* 1. TOP NAVIGATION HEADER (Matching blueprint-landing) */}
+      <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-matrix/40 px-5 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(v => !v)}
-            className="lg:hidden p-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-white/80 hover:text-white transition cursor-pointer"
+            className="lg:hidden text-matrix cursor-pointer p-1"
             aria-label="Toggle Curriculum"
           >
-            <Layers className="w-4 h-4" />
+            <Terminal className="h-6 w-6" />
           </button>
 
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-md bg-[#00f076]/10 border border-[#00f076]/30 flex items-center justify-center text-[#00f076] font-mono text-xs font-bold">
-              B
-            </div>
-            <span className="font-display font-extrabold text-base md:text-lg tracking-tight text-white">
-              BPO Blueprint
+          <div className="flex items-center gap-2">
+            <span className="text-matrix font-mono text-xs tracking-widest">[◉]</span>
+            <span className="font-display text-sm md:text-base font-black tracking-[0.18em] text-white">
+              BPO<span className="text-gold">.</span>BLUEPRINT
             </span>
           </div>
 
-          <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] font-mono text-[10px] font-semibold text-slate-300 uppercase tracking-wider ml-1">
-            Student Portal
+          <span className="hidden sm:inline-block px-2 py-0.5 rounded border border-matrix/40 font-mono text-[10px] font-bold text-matrix uppercase tracking-widest ml-2">
+            STUDENT PORTAL
           </span>
         </div>
 
         {/* Global Progress Bar */}
-        <div className="hidden md:flex items-center gap-3 bg-white/[0.03] border border-white/[0.06] px-3.5 py-1.5 rounded-full">
-          <span className="text-[11px] font-medium text-slate-400">Course Progress:</span>
-          <div className="w-28 lg:w-36 bg-white/[0.08] h-1.5 rounded-full overflow-hidden">
+        <div className="hidden md:flex items-center gap-3 bg-white/[0.02] border border-matrix/30 px-4 py-1.5 rounded-full">
+          <span className="font-mono text-[11px] uppercase tracking-widest text-white/50">Progress:</span>
+          <div className="w-28 lg:w-36 bg-white/10 h-1.5 rounded-full overflow-hidden">
             <div
-              className="bg-[#00f076] h-full transition-all duration-500 rounded-full"
+              className="bg-matrix h-full transition-all duration-500 rounded-full"
               style={{ width: `${completionPercentage}%` }}
             />
           </div>
-          <span className="text-xs font-mono font-semibold text-[#00f076]">{completionPercentage}%</span>
-          <span className="text-[11px] font-mono text-slate-500">({completedLessons.length}/{totalLessonsCount})</span>
+          <span className="text-xs font-mono font-bold text-matrix">{completionPercentage}%</span>
+          <span className="font-mono text-[10px] text-white/40">({completedLessons.length}/{totalLessonsCount})</span>
         </div>
 
-        {/* Right Action Tools */}
+        {/* Header Right Actions */}
         <div className="flex items-center gap-2.5">
-          {/* Earnings Deal Tracker */}
+          {/* Earnings Deal Tracker Button */}
           <button
             onClick={() => setShowEarningsModal(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 font-semibold text-xs transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-matrix/10 border border-matrix/40 text-matrix font-mono text-xs font-bold transition cursor-pointer"
             title="Log verified client deals & track earnings"
           >
-            <Trophy className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="hidden sm:inline text-slate-300">Earnings:</span>
-            <span className="font-mono font-bold text-[#00f076]">
+            <Trophy className="w-3.5 h-3.5 text-matrix" />
+            <span className="hidden sm:inline">EARNINGS:</span>
+            <span className="text-white font-bold">
               R{userTotalEarnings >= 1000 ? `${Math.round(userTotalEarnings / 1000)}k` : userTotalEarnings.toLocaleString()}
             </span>
           </button>
@@ -311,30 +309,27 @@ export default function DashboardPage() {
             href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-200 font-medium text-xs transition cursor-pointer"
+            className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/10 border border-white/20 text-white font-mono text-xs uppercase tracking-wider transition cursor-pointer"
           >
-            <BookOpen className="w-3.5 h-3.5 text-[#00f076]" />
+            <BookOpen className="w-3.5 h-3.5 text-matrix" />
             <span>50+ Work Examples</span>
           </a>
 
-          {/* Software Upgrade */}
+          {/* Upgrade Button */}
           <button
             onClick={() => setShowUpsellModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-semibold text-xs transition cursor-pointer"
+            className="btn-gold !py-2 !px-4 !text-xs"
           >
-            <Zap className="w-3.5 h-3.5 fill-amber-300" />
-            <span className="hidden sm:inline">50% OFF Software</span>
-            <span className="sm:hidden">50% OFF</span>
+            <Zap className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">50% OFF App</span>
+            <span className="sm:hidden">Upgrade</span>
           </button>
 
-          {/* User initials & logout */}
-          <div className="flex items-center gap-2 pl-2 border-l border-white/[0.08]">
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-xs font-bold text-slate-200">
-              {(user.fullName || user.email || 'S').charAt(0).toUpperCase()}
-            </div>
+          {/* Logout */}
+          <div className="flex items-center gap-2 pl-2 border-l border-white/10">
             <button
               onClick={handleLogout}
-              className="p-1.5 text-slate-400 hover:text-red-400 transition cursor-pointer"
+              className="p-1.5 text-white/40 hover:text-matrix transition cursor-pointer"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
@@ -343,24 +338,57 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* 2. MAIN CONTAINER */}
+      {/* 2. TICKER BANNER */}
+      <div className="bg-black border-b border-matrix/30 px-4 py-2 text-center flex flex-wrap items-center justify-center gap-3 font-mono text-xs uppercase tracking-wider">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-3.5 h-3.5 text-gold shrink-0" />
+          <span className="text-white/80">
+            <strong className="text-gold">// STUDENT OFFER:</strong> Unlock BPO Accelerator Software & Live Calls for{' '}
+            <span className="text-matrix font-bold underline cursor-pointer" onClick={() => setShowUpsellModal(true)}>
+              50% OFF
+            </span>!
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowUpsellModal(true)}
+            className="text-gold font-bold hover:underline transition cursor-pointer"
+          >
+            Claim 50% Coupon →
+          </button>
+          <span className="text-white/20">|</span>
+          <a
+            href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-matrix font-bold hover:underline transition"
+          >
+            50+ Portfolio (R2,000) →
+          </a>
+        </div>
+      </div>
+
+      {/* 3. MAIN DASHBOARD SPLIT VIEW */}
       <div className="flex-1 flex flex-col lg:flex-row min-w-0 overflow-hidden relative">
         {/* SIDEBAR: CHAPTERS & LESSONS */}
         <aside
-          className={`fixed lg:static inset-y-0 left-0 z-40 w-80 sm:w-88 lg:w-80 xl:w-88 bg-[#0b0d13] border-r border-white/[0.07] flex flex-col shrink-0 transition-transform duration-300 ${
-            sidebarOpen ? 'translate-x-0 top-[57px] bottom-0' : '-translate-x-full lg:translate-x-0'
+          className={`fixed lg:static inset-y-0 left-0 z-40 w-80 sm:w-88 lg:w-80 xl:w-92 bg-black border-r border-matrix/30 flex flex-col shrink-0 transition-transform duration-300 ${
+            sidebarOpen ? 'translate-x-0 top-[96px] bottom-0' : '-translate-x-full lg:translate-x-0'
           }`}
         >
-          <div className="p-4 border-b border-white/[0.07] bg-[#0d0f17] flex items-center justify-between">
-            <span className="font-display font-semibold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-2">
-              <Layers className="w-3.5 h-3.5 text-[#00f076]" /> Course Syllabus
-            </span>
-            <span className="text-[11px] font-mono font-medium text-slate-400">
+          <div className="p-4 border-b border-matrix/30 bg-black flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-matrix font-mono text-xs">[◉]</span>
+              <span className="font-mono text-xs font-bold uppercase tracking-widest text-white">
+                Course Chapters
+              </span>
+            </div>
+            <span className="font-mono text-[11px] text-matrix">
               {completedLessons.length} / {totalLessonsCount} Completed
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-white/[0.04] custom-scrollbar bg-[#0b0d13]">
+          <div className="flex-1 overflow-y-auto divide-y divide-white/5 custom-scrollbar bg-black">
             {CHAPTERS.map((ch) => {
               const isActiveChapter = activeChapter.id === ch.id;
               const chapterCompletedCount = ch.lessons.filter(l => completedLessons.includes(l.id)).length;
@@ -371,40 +399,40 @@ export default function DashboardPage() {
                   {/* Chapter Header */}
                   <button
                     onClick={() => setActiveChapter(ch)}
-                    className={`w-full text-left p-3.5 flex items-start gap-3 transition-colors cursor-pointer ${
-                      isActiveChapter ? 'bg-white/[0.04]' : 'hover:bg-white/[0.02]'
+                    className={`w-full text-left p-4 flex items-start gap-3 transition cursor-pointer ${
+                      isActiveChapter ? 'bg-white/[0.04] border-l-2 border-matrix' : 'hover:bg-white/[0.02]'
                     }`}
                   >
-                    <div className={`w-5 h-5 rounded-md flex items-center justify-center font-mono text-[11px] font-bold shrink-0 mt-0.5 ${
-                      isChapterDone ? 'bg-emerald-500/20 text-emerald-400' : isActiveChapter ? 'bg-[#00f076]/15 text-[#00f076]' : 'bg-white/[0.05] text-slate-400'
+                    <span className={`font-mono text-xs font-bold shrink-0 mt-0.5 ${
+                      isChapterDone ? 'text-matrix' : isActiveChapter ? 'text-matrix' : 'text-gold'
                     }`}>
                       {ch.number}
-                    </div>
+                    </span>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <h3 className={`text-sm font-semibold truncate ${isActiveChapter ? 'text-white' : 'text-slate-300'}`}>
+                        <h3 className={`font-display text-sm font-bold truncate ${isActiveChapter ? 'text-white' : 'text-white/80'}`}>
                           {ch.title}
                         </h3>
                         {isChapterDone ? (
-                          <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-400 shrink-0">
+                          <span className="flex items-center gap-1 text-[10px] font-mono text-matrix shrink-0">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                           </span>
                         ) : (
-                          <span className="text-[11px] font-mono text-slate-500 shrink-0">
+                          <span className="font-mono text-[10px] text-white/40 shrink-0">
                             {chapterCompletedCount}/{ch.lessons.length}
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                      <p className="font-mono text-[11px] text-white/40 truncate mt-0.5">
                         {ch.description}
                       </p>
                     </div>
                   </button>
 
-                  {/* Lessons in Chapter */}
+                  {/* Lessons */}
                   {isActiveChapter && (
-                    <div className="bg-[#08090d] py-1 px-2 space-y-0.5 border-t border-b border-white/[0.04]">
+                    <div className="bg-black/80 py-1.5 px-3 space-y-1 border-t border-b border-white/5">
                       {ch.lessons.map((les) => {
                         const isSelectedLesson = activeLesson.id === les.id;
                         const isDone = completedLessons.includes(les.id);
@@ -417,23 +445,23 @@ export default function DashboardPage() {
                               setSidebarOpen(false);
                               window.scrollTo({ top: 0, behavior: 'smooth' });
                             }}
-                            className={`w-full text-left py-2 px-3 rounded-lg flex items-center justify-between text-xs transition cursor-pointer ${
+                            className={`w-full text-left py-2.5 px-3 rounded flex items-center justify-between text-xs transition cursor-pointer ${
                               isSelectedLesson
-                                ? 'bg-[#00f076]/10 text-[#00f076] font-semibold border border-[#00f076]/25'
-                                : 'text-slate-300 hover:text-white hover:bg-white/[0.04] border border-transparent'
+                                ? 'bg-matrix/10 text-matrix font-mono font-bold border border-matrix/50 shadow-[0_0_20px_rgba(0,230,90,0.15)]'
+                                : 'text-white/70 hover:text-white hover:bg-white/5 border border-transparent font-mono'
                             }`}
                           >
                             <div className="flex items-center gap-2.5 min-w-0 pr-2">
                               {isDone ? (
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                <CheckCircle2 className="w-3.5 h-3.5 text-matrix shrink-0" />
                               ) : isSelectedLesson ? (
-                                <Play className="w-3.5 h-3.5 text-[#00f076] fill-[#00f076] shrink-0" />
+                                <Play className="w-3.5 h-3.5 text-matrix fill-matrix shrink-0" />
                               ) : (
-                                <Circle className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                                <Circle className="w-3.5 h-3.5 text-white/30 shrink-0" />
                               )}
                               <span className="truncate">{les.title}</span>
                             </div>
-                            <span className="font-mono text-[10px] text-slate-500 shrink-0">
+                            <span className="font-mono text-[10px] text-white/40 shrink-0">
                               {les.duration}
                             </span>
                           </button>
@@ -446,23 +474,23 @@ export default function DashboardPage() {
             })}
           </div>
 
-          {/* Sidebar Bottom Promo */}
-          <div className="p-3 border-t border-white/[0.07] bg-[#090a0f] space-y-2">
-            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between">
+          {/* Sidebar Footer Widget */}
+          <div className="p-3.5 border-t border-matrix/30 bg-black space-y-2">
+            <div className="p-3 rounded border border-white/10 bg-white/[0.02] flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
+                <div className="p-1.5 rounded bg-matrix/10 text-matrix shrink-0">
                   <Trophy className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] uppercase font-medium text-slate-400 block truncate">My Client Deals</span>
-                  <span className="text-xs font-mono font-bold text-[#00f076] truncate block">
+                  <span className="font-mono text-[10px] uppercase text-white/40 block truncate">Total Verified</span>
+                  <span className="font-mono text-xs font-bold text-matrix truncate block">
                     R{userTotalEarnings.toLocaleString()}
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setShowEarningsModal(true)}
-                className="btn-primary !py-1 !px-2.5 !text-[11px]"
+                className="btn-gold !py-1.5 !px-3 !text-[10px]"
               >
                 + Log Deal
               </button>
@@ -474,21 +502,21 @@ export default function DashboardPage() {
         {sidebarOpen && (
           <div
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-30 lg:hidden"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-30 lg:hidden"
           />
         )}
 
         {/* MAIN VIDEO & STUDY HUB */}
         <main className="flex-1 flex flex-col p-4 md:p-8 lg:p-10 overflow-y-auto space-y-6 max-w-5xl mx-auto w-full">
           {/* Header breadcrumb & title */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.07] pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-[#00f076] uppercase tracking-wider font-semibold">
-                <span>Chapter {activeChapter.number}</span>
-                <span className="text-slate-600">/</span>
-                <span className="text-slate-400">{activeChapter.title}</span>
+              <div className="flex items-center gap-2 font-mono text-xs text-matrix uppercase tracking-[0.2em]">
+                <span>CHAPTER {activeChapter.number}</span>
+                <span className="text-white/40">/</span>
+                <span className="text-gold">{activeChapter.title}</span>
               </div>
-              <h1 className="font-display font-bold text-2xl md:text-3xl text-white tracking-tight mt-1">
+              <h1 className="font-display font-black text-2xl md:text-4xl text-white tracking-tight mt-1">
                 {activeLesson.title}
               </h1>
             </div>
@@ -496,107 +524,107 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3 shrink-0">
               <button
                 onClick={handleToggleCompleted}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold transition cursor-pointer border ${
+                className={`btn-ghost-matrix !py-2 !px-4 !text-xs ${
                   completedLessons.includes(activeLesson.id)
-                    ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                    : 'bg-white/[0.04] text-slate-300 border-white/[0.08] hover:border-white/20 hover:text-white'
+                    ? '!bg-matrix/15 !border-matrix !text-matrix shadow-[0_0_30px_rgba(0,230,90,0.3)]'
+                    : ''
                 }`}
               >
                 <CheckCircle2 className="w-4 h-4" />
-                <span>{completedLessons.includes(activeLesson.id) ? 'Completed ✓' : 'Mark Complete'}</span>
+                <span>{completedLessons.includes(activeLesson.id) ? 'Completed ✓' : 'Mark Completed'}</span>
               </button>
             </div>
           </div>
 
-          {/* VIDEO CINEMA CONTAINER */}
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/[0.08] bg-black shadow-2xl">
+          {/* VIDEO CINEMA CONTAINER (Matching blueprint-landing video cards) */}
+          <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-matrix/50 bg-black shadow-[0_0_50px_rgba(0,230,90,0.15)] group">
             <iframe
               src={activeLesson.videoUrl}
               title={activeLesson.title}
-              className="w-full h-full border-0 rounded-2xl"
+              className="w-full h-full border-0 rounded-xl"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
           </div>
 
           {/* LESSON NAVIGATION BAR */}
-          <div className="flex items-center justify-between gap-3 p-3.5 rounded-xl card-premium">
+          <div className="flex items-center justify-between gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
             <div>
               {prevLesson ? (
                 <button
                   onClick={() => navigateToLesson(prevLesson)}
-                  className="btn-secondary !py-2 !px-3.5 !text-xs font-medium"
+                  className="btn-ghost-matrix !py-2 !px-4 !text-xs font-mono"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Previous: {prevLesson.title}</span>
                   <span className="sm:hidden">Previous</span>
                 </button>
               ) : (
-                <span className="text-xs text-slate-500 px-3 py-2 font-mono">First Lesson</span>
+                <span className="font-mono text-xs text-white/30 px-3 py-2">First Lesson</span>
               )}
             </div>
 
             <div>
               <button
                 onClick={handleCompleteAndNext}
-                className="btn-primary !py-2 !px-4 !text-xs"
+                className="btn-gold !py-2.5 !px-5 !text-xs font-mono"
               >
                 <span>{completedLessons.includes(activeLesson.id) ? 'Next Lesson' : 'Complete & Continue'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* INTERACTIVE STUDY HUB */}
-          <div className="card-premium p-6 md:p-8 space-y-6">
+          {/* INTERACTIVE STUDY HUB TABS */}
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6 md:p-8 space-y-6">
             {/* Tabs */}
-            <div className="flex items-center gap-2 border-b border-white/[0.07] pb-3 overflow-x-auto custom-scrollbar">
+            <div className="flex items-center gap-3 sm:gap-6 border-b border-white/10 pb-3 overflow-x-auto custom-scrollbar font-mono text-xs uppercase tracking-widest">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 ${
+                className={`pb-2 border-b-2 transition cursor-pointer shrink-0 ${
                   activeTab === 'overview'
-                    ? 'bg-white/[0.08] text-white'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'
+                    ? 'border-matrix text-matrix font-bold'
+                    : 'border-transparent text-white/50 hover:text-white'
                 }`}
               >
-                Overview & Action Plan
+                1. Overview & Action Plan
               </button>
 
               <button
                 onClick={() => setActiveTab('resources')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${
                   activeTab === 'resources'
-                    ? 'bg-white/[0.08] text-white'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'
+                    ? 'border-matrix text-matrix font-bold'
+                    : 'border-transparent text-white/50 hover:text-white'
                 }`}
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Resources ({activeLesson.resources.length})</span>
+                <span>2. Resources ({activeLesson.resources.length})</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('notes')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${
                   activeTab === 'notes'
-                    ? 'bg-white/[0.08] text-white'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]'
+                    ? 'border-matrix text-matrix font-bold'
+                    : 'border-transparent text-white/50 hover:text-white'
                 }`}
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>Private Notes</span>
-                {noteContent && <span className="w-1.5 h-1.5 rounded-full bg-[#00f076]" />}
+                <span>3. Lesson Notes</span>
+                {noteContent && <span className="w-2 h-2 rounded-full bg-matrix" />}
               </button>
 
               <button
                 onClick={() => setActiveTab('software')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                className={`pb-2 border-b-2 transition cursor-pointer flex items-center gap-2 shrink-0 ${
                   activeTab === 'software'
-                    ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                    : 'text-amber-400/70 hover:text-amber-300 hover:bg-amber-500/10'
+                    ? 'border-gold text-gold font-bold'
+                    : 'border-transparent text-white/50 hover:text-gold'
                 }`}
               >
-                <Zap className="w-3.5 h-3.5 fill-amber-300" />
-                <span>Software Suite</span>
+                <Zap className="w-3.5 h-3.5 fill-gold" />
+                <span>4. Software Platform</span>
               </button>
             </div>
 
@@ -604,20 +632,20 @@ export default function DashboardPage() {
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-display font-semibold text-base text-white mb-2">Lesson Breakdown</h3>
-                  <p className="text-slate-300 text-sm leading-relaxed">
+                  <h3 className="font-display font-bold text-lg text-white mb-2">Lesson Breakdown</h3>
+                  <p className="text-white/80 text-sm leading-relaxed">
                     {activeLesson.description}
                   </p>
                 </div>
 
                 {/* Implementation Checklist */}
-                <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-3.5">
+                <div className="p-5 rounded-xl border border-matrix/30 bg-black/60 space-y-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-xs text-slate-200 flex items-center gap-2">
-                      <CheckSquare className="w-4 h-4 text-[#00f076]" /> Action Items to Complete
+                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-matrix flex items-center gap-2">
+                      <CheckSquare className="w-4 h-4" /> Implementation Action Items
                     </span>
-                    <span className="text-[11px] text-slate-500 font-mono">
-                      Check off as you implement
+                    <span className="font-mono text-[10px] text-white/40">
+                      Check off as you complete
                     </span>
                   </div>
 
@@ -628,16 +656,16 @@ export default function DashboardPage() {
                         <button
                           key={idx}
                           onClick={() => toggleChecklistItem(idx)}
-                          className={`w-full text-left p-3 rounded-lg border flex items-start gap-3 transition cursor-pointer ${
+                          className={`w-full text-left p-3 rounded border flex items-start gap-3 transition cursor-pointer ${
                             isChecked
-                              ? 'bg-emerald-500/10 border-emerald-500/25 text-slate-400'
-                              : 'bg-white/[0.02] border-white/[0.05] text-slate-200 hover:border-white/15'
+                              ? 'bg-matrix/10 border-matrix/40 text-white/50'
+                              : 'bg-white/[0.02] border-white/10 text-white/90 hover:border-matrix/30'
                           }`}
                         >
-                          <div className="mt-0.5 text-[#00f076] shrink-0">
-                            {isChecked ? <CheckSquare className="w-4 h-4 text-[#00f076]" /> : <Square className="w-4 h-4 text-slate-500" />}
+                          <div className="mt-0.5 text-matrix shrink-0">
+                            {isChecked ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4 text-white/40" />}
                           </div>
-                          <span className={`text-xs md:text-sm leading-relaxed ${isChecked ? 'line-through text-slate-500' : 'text-slate-200'}`}>
+                          <span className={`text-xs md:text-sm leading-relaxed ${isChecked ? 'line-through text-white/40' : 'text-white/90'}`}>
                             {item}
                           </span>
                         </button>
@@ -646,9 +674,9 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] text-xs space-y-1">
-                  <div className="font-semibold text-slate-400 uppercase font-mono text-[10px]">Chapter Objective:</div>
-                  <div className="text-slate-300">{activeChapter.description}</div>
+                <div className="p-4 rounded-xl border border-gold/30 bg-gold/5 font-mono text-xs space-y-1">
+                  <div className="text-gold font-bold uppercase tracking-wider">// Chapter Core Objective:</div>
+                  <div className="text-white/80">{activeChapter.description}</div>
                 </div>
               </div>
             )}
@@ -656,30 +684,30 @@ export default function DashboardPage() {
             {/* TAB 2: RESOURCES */}
             {activeTab === 'resources' && (
               <div className="space-y-4">
-                <p className="text-xs text-slate-400">
-                  Templates, worksheets, and cold outreach scripts for this lesson:
+                <p className="font-mono text-xs text-white/50">
+                  Download templates, worksheets, and cold outreach scripts for this lesson:
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {activeLesson.resources.map((res, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-4 rounded-xl card-premium-interactive"
+                      className="flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-matrix/50 transition group"
                     >
                       <div className="flex items-center gap-3 min-w-0 pr-3">
-                        <div className="p-2.5 rounded-lg bg-white/[0.05] text-slate-300">
+                        <div className="p-2.5 rounded bg-matrix/10 text-matrix group-hover:bg-matrix group-hover:text-black transition">
                           <FileText className="w-4 h-4" />
                         </div>
                         <div className="min-w-0">
-                          <span className="text-sm font-semibold text-white block truncate">{res.title}</span>
-                          <span className="text-[11px] font-mono text-slate-400 uppercase">{res.type}</span>
+                          <span className="font-display text-sm font-bold text-white block truncate">{res.title}</span>
+                          <span className="font-mono text-[10px] text-matrix uppercase">{res.type} Format</span>
                         </div>
                       </div>
 
                       <a
                         href={res.url}
                         download
-                        className="btn-secondary !py-1.5 !px-3 !text-xs shrink-0"
+                        className="btn-ghost-matrix !py-1.5 !px-3 !text-xs shrink-0"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Download</span>
@@ -694,27 +722,27 @@ export default function DashboardPage() {
             {activeTab === 'notes' && (
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <label className="text-xs font-medium text-slate-400">
-                    Private Lesson Notes:
+                  <label className="font-mono text-xs text-white/60 uppercase">
+                    Personal Action Notes for: <strong className="text-white">{activeLesson.title}</strong>
                   </label>
 
                   <div className="flex items-center gap-2">
                     {noteSavedNotice && (
-                      <span className="text-xs text-[#00f076] font-medium animate-fade-in">
-                        ✓ Saved
+                      <span className="font-mono text-xs text-matrix font-bold animate-fade-in">
+                        ✓ Saved!
                       </span>
                     )}
                     <button
                       onClick={handleDownloadNotes}
                       disabled={!noteContent}
-                      className="btn-secondary !py-1.5 !px-3 !text-xs disabled:opacity-40"
+                      className="btn-ghost-matrix !py-1.5 !px-3 !text-xs disabled:opacity-40"
                     >
                       Export .txt
                     </button>
                     <button
                       onClick={handleSaveNote}
                       disabled={savingNote}
-                      className="btn-primary !py-1.5 !px-3.5 !text-xs"
+                      className="btn-gold !py-1.5 !px-3.5 !text-xs"
                     >
                       <Save className="w-3.5 h-3.5" />
                       <span>{savingNote ? 'Saving...' : 'Save Notes'}</span>
@@ -727,7 +755,7 @@ export default function DashboardPage() {
                   value={noteContent}
                   onChange={(e) => setNoteContent(e.target.value)}
                   placeholder="Record your action items, target niches, and discovery notes here..."
-                  className="w-full bg-[#07080c] border border-white/[0.08] focus:border-[#00f076]/50 rounded-xl p-4 text-sm text-slate-200 placeholder-slate-600 outline-none leading-relaxed transition"
+                  className="w-full bg-black/60 border border-white/10 focus:border-matrix rounded-xl p-4 text-sm text-white placeholder-white/30 outline-none font-mono leading-relaxed transition"
                 />
               </div>
             )}
@@ -736,46 +764,46 @@ export default function DashboardPage() {
             {activeTab === 'software' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-display font-semibold text-lg text-white mb-1 flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-amber-400 fill-amber-400" /> BPO Accelerator Automated Software Platform
+                  <h3 className="font-display font-black text-xl text-white mb-1 flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-gold fill-gold" /> BPO Accelerator Automated Software Suite
                   </h3>
-                  <p className="text-slate-300 text-sm leading-relaxed">
+                  <p className="text-white/70 text-sm leading-relaxed">
                     Automate lead scraping, cold outreach, and client proposals with the complete software ecosystem.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1.5">
-                    <span className="text-xs font-semibold text-[#00f076] block">01. AI Lead Scraper & Prospector</span>
-                    <p className="text-xs text-slate-400">Extract verified decision-maker emails, phone numbers, and company revenues in seconds.</p>
+                  <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-1.5">
+                    <span className="font-mono text-xs font-bold text-matrix block">01. AI Lead Scraper & Prospector</span>
+                    <p className="text-xs text-white/60">Extract verified decision-maker emails, phone numbers, and company revenues in seconds.</p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1.5">
-                    <span className="text-xs font-semibold text-[#00f076] block">02. Proposal & Contract Builder</span>
-                    <p className="text-xs text-slate-400">Generate high-converting custom agency proposals and contracts in 1 click.</p>
+                  <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-1.5">
+                    <span className="font-mono text-xs font-bold text-matrix block">02. Proposal & Contract Builder</span>
+                    <p className="text-xs text-white/60">Generate high-converting custom agency proposals and contracts in 1 click.</p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1.5">
-                    <span className="text-xs font-semibold text-[#00f076] block">03. Weekly Live Zoom Coaching</span>
-                    <p className="text-xs text-slate-400">Join Chris McLaren weekly to review lead campaigns and close deals live.</p>
+                  <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-1.5">
+                    <span className="font-mono text-xs font-bold text-matrix block">03. Weekly Live Zoom Coaching</span>
+                    <p className="text-xs text-white/60">Join Chris McLaren weekly to review lead campaigns and close deals live.</p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1.5">
-                    <span className="text-xs font-semibold text-[#00f076] block">04. VIP Community Network</span>
-                    <p className="text-xs text-slate-400">Network with 6-figure agency owners, exchange talent, and partner on contracts.</p>
+                  <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-1.5">
+                    <span className="font-mono text-xs font-bold text-matrix block">04. VIP Community Network</span>
+                    <p className="text-xs text-white/60">Network with 6-figure agency owners, exchange talent, and partner on contracts.</p>
                   </div>
                 </div>
 
-                <div className="p-6 rounded-xl bg-gradient-to-r from-amber-500/10 via-emerald-500/5 to-amber-500/10 border border-amber-500/25 text-center space-y-3">
-                  <h4 className="font-display font-bold text-lg text-white">
+                <div className="p-6 rounded-xl border border-gold/40 bg-gradient-to-r from-gold/10 to-matrix/10 text-center space-y-3">
+                  <h4 className="font-display font-black text-xl text-white">
                     Exclusive Student Privilege: 50% OFF
                   </h4>
-                  <p className="text-xs text-slate-400 max-w-md mx-auto">
+                  <p className="text-xs text-white/70 max-w-md mx-auto">
                     Use your blueprint student discount to unlock the full BPO Accelerator software platform.
                   </p>
                   <button
                     onClick={() => setShowUpsellModal(true)}
-                    className="btn-gold-action !py-2.5 !px-6 !text-xs mt-2"
+                    className="btn-gold !py-3 !px-8 !text-xs mt-2"
                   >
                     Claim 50% OFF Software →
                   </button>
@@ -786,53 +814,53 @@ export default function DashboardPage() {
         </main>
       </div>
 
-      {/* 3. UPSELL MODAL */}
+      {/* 4. UPGRADE MODAL */}
       {showUpsellModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-lg card-premium p-6 md:p-8 space-y-5 relative border-amber-500/30">
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-lg rounded-2xl border border-gold/40 bg-black p-6 md:p-8 space-y-5 relative shadow-[0_0_60px_rgba(212,175,55,0.2)]">
             <button
               onClick={() => setShowUpsellModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 cursor-pointer"
+              className="absolute top-4 right-4 text-white/40 hover:text-white p-2 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="text-center space-y-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 font-mono text-[10px] uppercase font-semibold text-amber-300">
-                ⚡ Student Upgrade
+              <span className="px-2.5 py-0.5 rounded-full bg-gold/15 border border-gold/30 font-mono text-[10px] uppercase font-bold text-gold">
+                ⚡ Exclusive Student Upgrade
               </span>
-              <h3 className="font-display font-bold text-2xl text-white">
+              <h3 className="font-display font-black text-2xl text-white">
                 BPO Accelerator Software & Live Coaching
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-white/60">
                 Automate your outreach with lead scrapers, proposal generators, and weekly live calls with Chris McLaren.
               </p>
             </div>
 
-            <div className="space-y-2 text-xs text-slate-300 bg-white/[0.02] p-4 rounded-xl border border-white/[0.05]">
+            <div className="space-y-2 text-xs text-white/80 bg-white/[0.02] p-4 rounded-xl border border-white/5">
               <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#00f076] shrink-0" />
+                <Check className="w-4 h-4 text-matrix shrink-0" />
                 <span>Unlimited verified B2B email and LinkedIn lead scraping</span>
               </div>
               <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#00f076] shrink-0" />
+                <Check className="w-4 h-4 text-matrix shrink-0" />
                 <span>AI agency proposal and contract generator</span>
               </div>
               <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#00f076] shrink-0" />
+                <Check className="w-4 h-4 text-matrix shrink-0" />
                 <span>Weekly live Zoom deal breakdown & coaching sessions</span>
               </div>
               <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#00f076] shrink-0" />
+                <Check className="w-4 h-4 text-matrix shrink-0" />
                 <span>Exclusive VIP Discord access with top agency operators</span>
               </div>
             </div>
 
             <div className="text-center space-y-3">
               <div className="flex items-center justify-center gap-3">
-                <span className="text-slate-500 line-through text-sm font-mono">R2,499/mo</span>
-                <span className="text-[#00f076] font-bold text-2xl font-mono">R1,249.50</span>
-                <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-mono text-[10px] font-bold">
+                <span className="text-white/40 line-through text-base font-mono">R2,499/mo</span>
+                <span className="text-matrix font-black text-2xl font-mono">R1,249.50</span>
+                <span className="px-2 py-0.5 rounded bg-matrix/20 text-matrix font-mono text-[10px] font-bold">
                   50% OFF FIRST MONTH
                 </span>
               </div>
@@ -841,7 +869,7 @@ export default function DashboardPage() {
                 href="https://whop.com/checkout/plan_OJny69V9b2Utm?promo=50OFF"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary w-full !py-3 !text-xs font-bold"
+                className="btn-gold w-full !py-3.5 !text-xs font-bold"
               >
                 Claim 50% Coupon & Upgrade →
               </a>
@@ -850,7 +878,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* 4. EARNINGS MODAL */}
+      {/* 5. LOG EARNINGS MODAL */}
       <LogEarningsModal
         isOpen={showEarningsModal}
         onClose={() => setShowEarningsModal(false)}
