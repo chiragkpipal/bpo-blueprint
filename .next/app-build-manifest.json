@@ -7,14 +7,6 @@
       "static/chunks/main-app-db97cbf69a21f1f2.js",
       "static/chunks/app/_not-found/page-5f91c10222baf6bd.js"
     ],
-    "/layout": [
-      "static/chunks/webpack-5cb266847fe7a5fb.js",
-      "static/chunks/4bd1b696-0bc13dde5fc97798.js",
-      "static/chunks/587-b75c016090e0188c.js",
-      "static/chunks/main-app-db97cbf69a21f1f2.js",
-      "static/css/8745af7563790c65.css",
-      "static/chunks/app/layout-5d35922a6090b45f.js"
-    ],
     "/api/confirm-payment/route": [
       "static/chunks/webpack-5cb266847fe7a5fb.js",
       "static/chunks/4bd1b696-0bc13dde5fc97798.js",
@@ -50,12 +42,21 @@
       "static/chunks/main-app-db97cbf69a21f1f2.js",
       "static/chunks/app/api/progress/route-c15512688beda99f.js"
     ],
-    "/api/course/route": [
+    "/layout": [
       "static/chunks/webpack-5cb266847fe7a5fb.js",
       "static/chunks/4bd1b696-0bc13dde5fc97798.js",
       "static/chunks/587-b75c016090e0188c.js",
       "static/chunks/main-app-db97cbf69a21f1f2.js",
-      "static/chunks/app/api/course/route-f922da507d55623d.js"
+      "static/css/62561aa05a69e3fb.css",
+      "static/chunks/app/layout-5d35922a6090b45f.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-5cb266847fe7a5fb.js",
+      "static/chunks/4bd1b696-0bc13dde5fc97798.js",
+      "static/chunks/587-b75c016090e0188c.js",
+      "static/chunks/main-app-db97cbf69a21f1f2.js",
+      "static/chunks/356-b72feab05a462eb6.js",
+      "static/chunks/app/page-e9699ecb22042bd5.js"
     ],
     "/login/page": [
       "static/chunks/webpack-5cb266847fe7a5fb.js",
@@ -64,13 +65,12 @@
       "static/chunks/main-app-db97cbf69a21f1f2.js",
       "static/chunks/app/login/page-f5519ed90aee8040.js"
     ],
-    "/page": [
+    "/api/course/route": [
       "static/chunks/webpack-5cb266847fe7a5fb.js",
       "static/chunks/4bd1b696-0bc13dde5fc97798.js",
       "static/chunks/587-b75c016090e0188c.js",
       "static/chunks/main-app-db97cbf69a21f1f2.js",
-      "static/chunks/356-b72feab05a462eb6.js",
-      "static/chunks/app/page-0dd3341efaf8783c.js"
+      "static/chunks/app/api/course/route-f922da507d55623d.js"
     ],
     "/privacy/page": [
       "static/chunks/webpack-5cb266847fe7a5fb.js",

@@ -45,7 +45,6 @@ export default function DashboardPage() {
   const [noteSavedNotice, setNoteSavedNotice] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'resources' | 'notes' | 'software'>('overview');
-  const [showUpsellModal, setShowUpsellModal] = useState(false);
   const [showEarningsModal, setShowEarningsModal] = useState(false);
   const [userTotalEarnings, setUserTotalEarnings] = useState<number>(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -342,14 +341,16 @@ export default function DashboardPage() {
           </a>
 
           {/* Upgrade Button */}
-          <button
-            onClick={() => setShowUpsellModal(true)}
-            className="btn-gold !py-2 !px-4 !text-xs"
+          <a
+            href="https://commas.com/checkout/J11VoPXJygAHFKaTl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-gold !py-2 !px-4 !text-xs flex items-center gap-1.5 cursor-pointer"
           >
             <Zap className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">50% OFF App</span>
             <span className="sm:hidden">Upgrade</span>
-          </button>
+          </a>
 
           {/* Logout */}
           <div className="flex items-center gap-2 pl-2 border-l border-white/10">
@@ -370,18 +371,25 @@ export default function DashboardPage() {
           <Sparkles className="w-3.5 h-3.5 text-gold shrink-0" />
           <span className="text-white/80">
             <strong className="text-gold">// STUDENT OFFER:</strong> Unlock BPO Accelerator Software & Live Calls for{' '}
-            <span className="text-matrix font-bold underline cursor-pointer" onClick={() => setShowUpsellModal(true)}>
+            <a
+              href="https://commas.com/checkout/J11VoPXJygAHFKaTl"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-matrix font-bold underline cursor-pointer"
+            >
               50% OFF
-            </span>!
+            </a>!
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowUpsellModal(true)}
+          <a
+            href="https://commas.com/checkout/J11VoPXJygAHFKaTl"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-gold font-bold hover:underline transition cursor-pointer"
           >
-            Claim 50% Coupon →
-          </button>
+            Claim 50% Off →
+          </a>
           <span className="text-white/20">|</span>
           <a
             href="https://www.fanbasis.com/agency-checkout/bpoaccelerator/l8V9g"
@@ -774,12 +782,14 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
-                  <button
-                    onClick={() => setShowUpsellModal(true)}
-                    className="w-full sm:w-auto btn-gold !py-3 !px-8 !text-xs font-mono"
+                  <a
+                    href="https://commas.com/checkout/J11VoPXJygAHFKaTl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto btn-gold !py-3 !px-8 !text-xs font-mono text-center flex items-center justify-center gap-2 cursor-pointer"
                   >
                     Claim 50% Student Discount →
-                  </button>
+                  </a>
                   <a
                     href="https://bpoaccelerator.ai"
                     target="_blank"
@@ -804,61 +814,6 @@ export default function DashboardPage() {
           onClose={() => setShowEarningsModal(false)}
           onEarningsUpdated={(newTotal) => setUserTotalEarnings(newTotal)}
         />
-      )}
-
-      {/* Software 50% Upsell Modal */}
-      {showUpsellModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-black border border-gold/50 rounded-2xl max-w-lg w-full p-6 md:p-8 space-y-6 shadow-[0_0_80px_rgba(212,175,55,0.2)] relative">
-            <button
-              onClick={() => setShowUpsellModal(false)}
-              className="absolute top-4 right-4 text-white/40 hover:text-white p-1"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="space-y-2">
-              <span className="font-mono text-xs uppercase tracking-widest text-gold font-bold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
-                Special 50% Blueprint Student Voucher
-              </span>
-              <h3 className="font-display font-black text-2xl text-white">
-                Unlock BPO Accelerator Suite
-              </h3>
-              <p className="font-sans text-xs text-white/70 leading-relaxed">
-                Take your agency to R100,000/month by unlocking AI lead scrapers, automated proposal dispatchers, and live weekly coaching calls.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-gold/10 border border-gold/30 flex items-center justify-between">
-              <div>
-                <span className="font-mono text-[10px] uppercase tracking-wider text-white/50 block">Your Exclusive Coupon</span>
-                <span className="font-mono text-base font-bold text-gold">BLUEPRINT50</span>
-              </div>
-              <span className="font-mono text-xs font-black text-matrix bg-matrix/10 px-3 py-1 rounded border border-matrix/30">
-                50% OFF FOREVER
-              </span>
-            </div>
-
-            <div className="space-y-3 pt-2">
-              <a
-                href="https://app.bpoaccelerator.ai/signup?coupon=BLUEPRINT50"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full btn-gold !py-3.5 !text-xs font-mono flex items-center justify-center gap-2"
-              >
-                <span>Activate BPO Accelerator Software</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
-              <button
-                onClick={() => setShowUpsellModal(false)}
-                className="w-full text-center font-mono text-xs text-white/40 hover:text-white py-1"
-              >
-                Maybe later
-              </button>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
