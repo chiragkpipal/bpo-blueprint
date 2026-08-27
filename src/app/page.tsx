@@ -483,7 +483,7 @@ export default function DashboardPage() {
                               : 'text-white/70 hover:text-white hover:bg-white/[0.03]'
                               }`}
                           >
-                            <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
                               {isDone ? (
                                 <CheckCircle2 className="w-3.5 h-3.5 text-matrix shrink-0" />
                               ) : (
@@ -491,9 +491,6 @@ export default function DashboardPage() {
                               )}
                               <span className="truncate">{les.title}</span>
                             </div>
-                            <span className="font-mono text-[10px] text-white/40 shrink-0">
-                              {les.duration || '12 min'}
-                            </span>
                           </button>
                         );
                       })}
